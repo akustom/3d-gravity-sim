@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 4.1)
+project(3grav)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+find_package(OpenGL REQUIRED)
+find_package(GLFW3 REQUIRED)
+
+add_executable(3grav
+        src/main.cpp
+        src/glad.c
+)
+
+target_include_directories(3grav PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+target_link_libraries(3grav ${GLFW3_LIBRARY} OpenGL::GL)
