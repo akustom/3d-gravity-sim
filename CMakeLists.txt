@@ -17,5 +17,5 @@ target_include_directories(3grav PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(3grav ${GLFW3_LIBRARY} OpenGL::GL)
 
 target_compile_definitions(3grav PRIVATE
-        SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+        SOURCE_DIR="${CMAKE_SOURCE_DIR}/"
 )
