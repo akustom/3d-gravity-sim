@@ -10,7 +10,6 @@ find_package(GLFW3 REQUIRED)
 add_executable(3grav
         src/main.cpp
         src/glad.c
-        include/vector3.h
 )
 
 target_include_directories(3grav PRIVATE ${CMAKE_SOURCE_DIR}/include)
