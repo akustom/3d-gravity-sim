@@ -1,5 +1,4 @@
-#ifndef GL_UTILITIES_HPP
-#define GL_UTILITIES_HPP
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -19,7 +18,7 @@ inline std::string readFile(const std::string& filePath) {
     return buffer.str();
 }
 
-namespace gl {
+namespace glu {
     inline GLuint getCurrentVAO() {
         GLint current = 0;
         glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &current);
@@ -47,15 +46,20 @@ namespace gl {
     };
 
     class ShaderProgram {
-        GLuint id = 0;  // im gonna hardcode the shaders for now. also, its not like im gonna need more than one program anyway
+          // im gonna hardcode the shaders for now. also, its not like im gonna need more than one program anyway
                         // but, if i ever do, this architecture would make it easy to refactor
         Shader vertexShader;
         Shader fragmentShader;
 
     public:
+        GLuint id = 0;
+
+        ShaderProgram() = default;
         ~ShaderProgram() {
             glDeleteProgram(id);
         }
+        ShaderProgram(const ShaderProgram&) = delete;
+        ShaderProgram& operator=(const ShaderProgram&) = delete;
 
         void compileShaders() {
             vertexShader.compile(SOURCE_DIR "shaders/vertexShader.vert", GL_VERTEX_SHADER);
@@ -81,9 +85,12 @@ namespace gl {
         GLuint id = 0;
 
     public:
+        VAO() = default;
         ~VAO() {
             glDeleteVertexArrays(1, &id);
         }
+        VAO(const VAO&) = delete;
+        VAO& operator=(const VAO&) = delete;
 
         void gen() {
             glGenVertexArrays(1, &id);
@@ -113,9 +120,12 @@ namespace gl {
         GLuint id = 0;
 
     public:
+        VBO() = default;
         ~VBO() {
             glDeleteBuffers(1, &id);
         }
+        VBO(const VBO&) = delete;
+        VBO& operator=(const VBO&) = delete;
 
         void gen() {
             glGenBuffers(1, &id);
@@ -130,6 +140,11 @@ namespace gl {
 
             glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.size() * sizeof(float)), data.data(), usage);
         }
+        void bufferData(const std::vector<glm::mat4>& data, GLenum usage) const {
+            if (getCurrentVBO() != id)
+                std::cerr << "buffered data to an unexpected VBO" << " | attempted id: " << id << " | current id:" << getCurrentVBO() << "\n";
+
+            glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.size() * sizeof(glm::mat4)), data.data(), usage);
+        }
     };
 }
-#endif
