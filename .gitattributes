@@ -1,7 +1,8 @@
+include/KHR/**              linguist-vendored
 include/glad/**             linguist-vendored
 include/GLFW/**             linguist-vendored
 include/glm/**              linguist-vendored
+cmake/**                    linguist-vendored
 lib/**                      linguist-vendored
 src/glad.c                  linguist-vendored
-include/KHR/khrplatform.h   linguist-vendored
 
