@@ -1,4 +1,7 @@
+include/KHR/**  linguist-vendored
 include/glad/** linguist-vendored
 include/GLFW/** linguist-vendored
 include/glm/**  linguist-vendored
+lib/**  linguist-vendored
 src/glad.c      linguist-vendored
+
