@@ -1,0 +1,3 @@
+include/glad/** linguist-vendored
+include/GLFW/** linguist-vendored
+src/glad.c      linguist-vendored
