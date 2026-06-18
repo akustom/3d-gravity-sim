@@ -10,11 +10,10 @@
 #include <glm/gtc/type_ptr.hpp>
 // just my utilities
 #include <gl_utilities.hpp>
-#include <vector3.hpp>
-
+#include <utilities.hpp>
 
 struct Camera {
-    glm::vec3 position = {0.0f, 0.0f, 1.0f};
+    glm::vec3 position = {0.0f, 0.0f, 5.0f};
     glm::vec3 target = {0.0f, 0.0f, 0.0f};
 
     glm::vec3 cameraFront = glm::normalize(position - target);
@@ -28,34 +27,25 @@ struct Camera {
     }
 };
 
-
 struct Mesh {
-    std::vector<float> vertices = {
-        -0.25f,  0.25f, 0.0f, 1.0f, 0.0f, 0.0f,
-       -0.25f, -0.25f, 0.0f, 0.0f, 1.0f, 0.0f,
-        0.25f, -0.25f, 0.0f, 0.0f, 0.0f, 1.0f,
-        0.25f, 0.25f, 0.0f, 1.0f, 0.0f, 0.0f,
-        -0.25f,  0.25f, 0.0f, 1.0f, 0.0f, 0.0f,
-        0.25f, -0.25f, 0.0f, 0.0f, 0.0f, 1.0f,
+    std::vector<util::vertex> vertices = {
+        {{-0.25f, 0.25f, 0.0f},     {1.0f, 0.0f, 0.0f}},
+        {{-0.25f, -0.25f, 0.0f},    {0.0f, 1.0f, 0.0f}},
+        {{0.25f, -0.25f, 0.0f},     {0.0f, 0.0f, 1.0f}},
+        {{0.25f, 0.25f, 0.0f},      {1.0f, 0.0f, 0.0f}},
+        {{-0.25f, 0.25f, 0.0f},     {1.0f, 0.0f, 0.0f}},
+        {{0.25f, -0.25f, 0.0f},     {0.0f, 0.0f, 1.0f}},
     };
 };
 
 
 struct Particles {
-    std::vector<glm::vec3> instancePos = {
-        {0.0f, 0.0f, 0.0f},
+    std::vector<glm::dvec3> instancePos = {
+        {0.0, 0.0, 0.0},
+        {0.0, 1.0, 0.0},
+        {1.0, 0.0, 0.0},
+        {-1.0, 0.0, 0.0}
     };
-
-    std::vector<glm::mat4> instanceModel;
-
-    void updateInstanceModel() {
-        instanceModel.resize(instancePos.size());
-        for (int i = 0; i < instancePos.size(); i++) {
-            auto model = glm::mat4(1.0f);
-            model = glm::translate(model, instancePos[i]);
-            instanceModel[i] = model;
-        }
-    }
 };
 
 int main() {
@@ -77,38 +67,33 @@ int main() {
 
     glViewport(0, 0, 960, 540);
 
+    glu::Shader vertex{SOURCE_DIR "shaders/vertexShader.vert", GL_VERTEX_SHADER};
+    glu::Shader fragment{SOURCE_DIR "shaders/fragmentShader.frag", GL_FRAGMENT_SHADER};
+
     glu::ShaderProgram shaderProgram;
-    shaderProgram.compileShaders();
-    shaderProgram.build();
+    shaderProgram.build(vertex, fragment);
     shaderProgram.use();
 
     Mesh triangle;
 
     glu::VAO vertexVAO;
-    vertexVAO.gen();
     vertexVAO.bind();
 
     glu::VBO triangleVBO;
-    triangleVBO.gen();
     triangleVBO.bind();
     triangleVBO.bufferData(triangle.vertices, GL_STATIC_DRAW);
 
-    vertexVAO.linkAttribute(0, 3, 6, 0); // links mesh vertices
-    vertexVAO.linkAttribute(1, 3, 6, 3); // links mesh colors
+    vertexVAO.linkAttribute(0, 3, GL_FLOAT, 6, 0); // links mesh vertices
+    vertexVAO.linkAttribute(1, 3, GL_FLOAT, 6, 3); // links mesh colors
 
     Particles particles;
 
     glu::VBO instanceVBO;
-    instanceVBO.gen();
     instanceVBO.bind();
+    instanceVBO.bufferData(particles.instancePos, GL_STATIC_DRAW);
 
-    particles.updateInstanceModel();
-
-    instanceVBO.bufferData(particles.instanceModel, GL_STATIC_DRAW);
-    for (int i = 0; i < 4; i++) {
-        vertexVAO.linkAttribute(2 + i, 4, 16, i * 4);
-        vertexVAO.setAttributeDivisor(2 + i, 1);
-    }
+    vertexVAO.linkAttribute(2, 3, GL_DOUBLE, 3, 0);
+    vertexVAO.setAttributeDivisor(2, 1);
 
     Camera camera;
     GLint viewLoc = glGetUniformLocation(shaderProgram.id, "view");
