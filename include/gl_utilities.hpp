@@ -18,7 +18,22 @@ inline std::string readFile(const std::string& filePath) {
     return buffer.str();
 }
 
+
 namespace glu {
+    template <typename T>
+    concept trivially_copyable = std::is_trivially_copyable_v<T>;
+
+    int getGLTypeSize(auto type) {
+        switch (type) {
+            case GL_FLOAT:  return sizeof(float);
+            case GL_INT:    return sizeof(int);
+            case GL_DOUBLE: return sizeof(double);
+            default:
+                std::cerr << "unexpected GL type: " << type << "\n";
+                return 0;
+        }
+    }
+
     inline GLuint getCurrentVAO() {
         GLint current = 0;
         glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &current);
@@ -35,6 +50,10 @@ namespace glu {
         GLuint id = 0;
         int bufferIndex = -1;
 
+        Shader(const std::string& filePath, const GLenum shaderType) {
+            compile(filePath, shaderType);
+        }
+
         void compile(const std::string& filePath, const GLenum shaderType) {
             std::string sourceCode = readFile(filePath);
             const char* c_sourceCode = sourceCode.c_str();
@@ -46,28 +65,19 @@ namespace glu {
     };
 
     class ShaderProgram {
-          // im gonna hardcode the shaders for now. also, its not like im gonna need more than one program anyway
-                        // but, if i ever do, this architecture would make it easy to refactor
-        Shader vertexShader;
-        Shader fragmentShader;
-
     public:
         GLuint id = 0;
 
-        ShaderProgram() = default;
+        ShaderProgram() {
+            id = glCreateProgram();
+        }
         ~ShaderProgram() {
             glDeleteProgram(id);
         }
         ShaderProgram(const ShaderProgram&) = delete;
         ShaderProgram& operator=(const ShaderProgram&) = delete;
 
-        void compileShaders() {
-            vertexShader.compile(SOURCE_DIR "shaders/vertexShader.vert", GL_VERTEX_SHADER);
-            fragmentShader.compile(SOURCE_DIR "shaders/fragmentShader.frag", GL_FRAGMENT_SHADER);
-        }
-
-        void build() {
-            id = glCreateProgram();
+        void build(const Shader& vertexShader, const Shader& fragmentShader) const {
             glAttachShader(id, vertexShader.id);
             glAttachShader(id, fragmentShader.id);
             glLinkProgram(id);
@@ -84,28 +94,45 @@ namespace glu {
     class VAO {
         GLuint id = 0;
 
+        void gen() {
+            glGenVertexArrays(1, &id);
+        }
+
     public:
-        VAO() = default;
+        VAO() {
+            gen();
+        }
         ~VAO() {
             glDeleteVertexArrays(1, &id);
         }
         VAO(const VAO&) = delete;
         VAO& operator=(const VAO&) = delete;
 
-        void gen() {
-            glGenVertexArrays(1, &id);
+        VAO(VAO&& other) noexcept {
+            this->id = other.id;
+            other.id = 0;
         }
+        VAO& operator=(VAO&& other) noexcept {
+            if (this != &other) {
+                glDeleteVertexArrays(1, &id);
+
+                id = other.id;
+                other.id = 0;
+            }
+            return *this;
+        }
+
         void bind() const {
             glBindVertexArray(id);
         }
 
-        void linkAttribute(int location, int size, int item_stride, int item_offset) const {
+        void linkAttribute(int location, int size, GLenum type, int element_stride, int element_offset) const {
             if (getCurrentVAO() != id)
                 std::cerr << "linked attributes with an unexpected VAO" << " | attempted id: " << id << " | current id:" << getCurrentVAO() << "\n";
 
             glVertexAttribPointer(
-                location, size, GL_FLOAT, GL_FALSE,
-                static_cast<GLsizei>(item_stride * sizeof(float)), reinterpret_cast<void*>(item_offset * sizeof(float)));
+                location, size, type, GL_FALSE,
+                static_cast<GLsizei>(element_stride * getGLTypeSize(type)), reinterpret_cast<void*>(element_offset * getGLTypeSize(type)));
             glEnableVertexAttribArray(location);
         }
 
@@ -119,32 +146,44 @@ namespace glu {
     class VBO {
         GLuint id = 0;
 
+        void gen() {
+            glGenBuffers(1, &id);
+        }
+
     public:
-        VBO() = default;
+        VBO() {
+            gen();
+        }
         ~VBO() {
             glDeleteBuffers(1, &id);
         }
         VBO(const VBO&) = delete;
         VBO& operator=(const VBO&) = delete;
 
-        void gen() {
-            glGenBuffers(1, &id);
+        VBO(VBO&& other) noexcept {
+            this->id = other.id;
+            other.id = 0;
         }
+        VBO& operator=(VBO&& other) noexcept {
+            if (this != &other) {
+                glDeleteBuffers(1, &id);
+
+                id = other.id;
+                other.id = 0;
+            }
+            return *this;
+        }
+
         void bind() const {
             glBindBuffer(GL_ARRAY_BUFFER, id);
         }
 
-        void bufferData(const std::vector<float>& data, GLenum usage) const {
+        template <trivially_copyable Type>
+        void bufferData(const std::vector<Type>& data, GLenum usage) const {
             if (getCurrentVBO() != id)
                 std::cerr << "buffered data to an unexpected VBO" << " | attempted id: " << id << " | current id:" << getCurrentVBO() << "\n";
 
-            glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.size() * sizeof(float)), data.data(), usage);
-        }
-        void bufferData(const std::vector<glm::mat4>& data, GLenum usage) const {
-            if (getCurrentVBO() != id)
-                std::cerr << "buffered data to an unexpected VBO" << " | attempted id: " << id << " | current id:" << getCurrentVBO() << "\n";
-
-            glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.size() * sizeof(glm::mat4)), data.data(), usage);
+            glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.size() * sizeof(Type)), data.data(), usage);
         }
     };
 }
