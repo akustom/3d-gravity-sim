@@ -26,23 +26,21 @@ struct Camera {
 
     void posAdd(const glm::vec3& displace) {
         position += displace;
-        isViewDirty = !true;
+        isViewDirty = true;
     }
 
     [[nodiscard]] glm::mat4 getViewMatrix() const {
         return glm::lookAt(position, target, cameraUp);
     }
 
-    void pushViewMatrix(const glu::ShaderProgram& program, const char* view_uniform) const {
+    void pushViewMatrix(const glu::ShaderProgram& program, const char* uniform_name) const {
         if (!isViewDirty)
             return;
-        GLint viewLoc = glGetUniformLocation(program.id, view_uniform);
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(getViewMatrix()));
+        program.pushToUniform(uniform_name, getViewMatrix());
     }
 
-    void pushProjectionMatrix(const glu::ShaderProgram& program, const char* projection_uniform) {
-        GLint projectionLoc = glGetUniformLocation(program.id, projection_uniform);
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+    void pushProjectionMatrix(const glu::ShaderProgram& program, const char* uniform_name) const {
+        program.pushToUniform(uniform_name, projection);
     }
 };
 
@@ -109,8 +107,8 @@ int main() {
     triangleEBO.bind();
     triangleEBO.bufferData(triangle.indices, GL_STATIC_DRAW);
 
-    vertexVAO.linkAttribute(0, 3, GL_FLOAT, 6, 0); // links mesh vertices
-    vertexVAO.linkAttribute(1, 3, GL_FLOAT, 6, 3); // links mesh colors
+    vertexVAO.linkAttribute(0, 3, GL_FLOAT, 7, 0); // links mesh vertices
+    vertexVAO.linkAttribute(1, 3, GL_FLOAT, 7, 4); // links mesh colors
 
     Particles particles;
 
