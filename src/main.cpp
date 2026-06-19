@@ -52,8 +52,10 @@ struct Mesh {
         {{-0.25f, -0.25f, 0.0f},    {0.0f, 1.0f, 0.0f}},
         {{0.25f, -0.25f, 0.0f},     {0.0f, 0.0f, 1.0f}},
         {{0.25f, 0.25f, 0.0f},      {1.0f, 0.0f, 0.0f}},
-        {{-0.25f, 0.25f, 0.0f},     {1.0f, 0.0f, 0.0f}},
-        {{0.25f, -0.25f, 0.0f},     {0.0f, 0.0f, 1.0f}},
+    };
+    std::vector<glm::uvec3> indices = {
+        {0, 1, 2},
+        {0, 3, 2}
     };
 };
 
@@ -102,6 +104,10 @@ int main() {
     triangleVBO.bind();
     triangleVBO.bufferData(triangle.vertices, GL_STATIC_DRAW);
 
+    glu::EBO triangleEBO;
+    triangleEBO.bind();
+    triangleEBO.bufferData(triangle.indices, GL_STATIC_DRAW);
+
     vertexVAO.linkAttribute(0, 3, GL_FLOAT, 6, 0); // links mesh vertices
     vertexVAO.linkAttribute(1, 3, GL_FLOAT, 6, 3); // links mesh colors
 
@@ -122,7 +128,7 @@ int main() {
         glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArraysInstanced(GL_TRIANGLES, 0, 6, static_cast<GLsizei>(particles.instancePos.size()));
+        glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr, static_cast<GLsizei>(particles.instancePos.size()));
         camera.position = glm::angleAxis(glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * camera.position;
         camera.pushViewMatrix(shaderProgram, "view");
 
