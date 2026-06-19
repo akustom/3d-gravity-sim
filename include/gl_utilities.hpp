@@ -58,6 +58,25 @@ namespace glu {
         Shader(const std::string& filePath, const GLenum shaderType) {
             compile(filePath, shaderType);
         }
+        ~Shader() {
+            glDeleteShader(id);
+        }
+        Shader(const Shader&) = delete;
+        Shader& operator=(const Shader&) = delete;
+
+        Shader(Shader&& other) noexcept {
+            id = other.id;
+            other.id = 0;
+        }
+        Shader& operator=(Shader&& other) noexcept {
+            if (this != &other) {
+                glDeleteShader(id);
+
+                id = other.id;
+                other.id = 0;
+            }
+            return *this;
+        }
 
         void compile(const std::string& filePath, const GLenum shaderType) {
             std::string sourceCode = readFile(filePath);
@@ -81,6 +100,21 @@ namespace glu {
         }
         ShaderProgram(const ShaderProgram&) = delete;
         ShaderProgram& operator=(const ShaderProgram&) = delete;
+
+        ShaderProgram(ShaderProgram&& other) noexcept {
+            id = other.id;
+            other.id = 0;
+        }
+        ShaderProgram& operator=(ShaderProgram&& other) noexcept {
+            if (this != &other) {
+                glDeleteProgram(id);
+
+                id = other.id;
+                other.id = 0;
+            }
+            return *this;
+        }
+
 
         void build(const Shader& vertexShader, const Shader& fragmentShader) const {
             glAttachShader(id, vertexShader.id);
