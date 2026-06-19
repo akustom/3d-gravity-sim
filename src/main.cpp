@@ -115,16 +115,16 @@ int main() {
     vertexVAO.setAttributeDivisor(2, 1);
 
     Camera camera;
-    GLint viewLoc = glGetUniformLocation(shaderProgram.id, "view");
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
-    GLint projectionLoc = glGetUniformLocation(shaderProgram.id, "projection");
-    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(camera.projection));
+    camera.pushProjectionMatrix(shaderProgram, "projection");
+    camera.pushViewMatrix(shaderProgram, "view");
 
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glDrawArraysInstanced(GL_TRIANGLES, 0, 6, static_cast<GLsizei>(particles.instancePos.size()));
+        camera.position = glm::angleAxis(glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * camera.position;
+        camera.pushViewMatrix(shaderProgram, "view");
 
         glfwSwapBuffers(window);
         glfwPollEvents();
