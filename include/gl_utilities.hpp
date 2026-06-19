@@ -6,6 +6,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <debug.hpp>
 
 inline std::string readFile(const std::string& filePath) {
     std::ifstream file(filePath);
@@ -31,24 +32,6 @@ namespace glu {
                 std::cerr << "unexpected GL type: " << type << "\n";
                 return 0;
         }
-    }
-
-    inline GLuint getCurrentVAO() {
-        GLint current = 0;
-        glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &current);
-        return current;
-    }
-
-    inline GLuint getCurrentVBO() {
-        GLint current = 0;
-        glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &current);
-        return current;
-    }
-
-    inline GLuint getCurrentEBO() {
-        GLint current = 0;
-        glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &current);
-        return current;
     }
 
     struct Shader {
@@ -166,18 +149,17 @@ namespace glu {
         }
 
         void linkAttribute(int location, int size, GLenum type, int element_stride, int element_offset) const {
-            if (getCurrentVAO() != id)
-                std::cerr << "linked attributes with an unexpected VAO" << " | attempted id: " << id << " | current id:" << getCurrentVAO() << "\n";
+            DEBUG::validateVAOLink(id);
 
             glVertexAttribPointer(
                 location, size, type, GL_FALSE,
-                static_cast<GLsizei>(element_stride * getGLTypeSize(type)), reinterpret_cast<void*>(element_offset * getGLTypeSize(type)));
+                static_cast<GLsizei>(element_stride * getGLTypeSize(type)),
+                reinterpret_cast<void*>(element_offset * getGLTypeSize(type)));
             glEnableVertexAttribArray(location);
         }
 
         void setAttributeDivisor(int location, int divisor) const {
-            if (getCurrentVAO() != id)
-                std::cerr << "set attribute divisor with an unexpected VAO" << " | attempted id: " << id << " | current id:" << getCurrentVAO() << "\n";
+            DEBUG::validateVAODivisor(id);
             glVertexAttribDivisor(location, divisor);
         }
     };
@@ -229,9 +211,7 @@ namespace glu {
             Buffer::bind(GL_ARRAY_BUFFER);
         }
         void bufferData(const auto& data, GLenum usage) {
-            GLuint currentBuffer = getCurrentVBO();
-            if (currentBuffer != id)
-                std::cerr << "buffered data to an unexpected VBO" << " | attempted id: " << id << " | current id:" << currentBuffer << "\n";
+            DEBUG::validateVBOBuffer(id);
             Buffer::bufferData(GL_ARRAY_BUFFER, data, usage);
         }
     };
@@ -241,9 +221,7 @@ namespace glu {
             Buffer::bind(GL_ELEMENT_ARRAY_BUFFER);
         }
         void bufferData(const auto& data, GLenum usage) {
-            GLuint currentBuffer = getCurrentEBO();
-            if (currentBuffer != id)
-                std::cerr << "buffered data to an unexpected EBO" << " | attempted id: " << id << " | current id:" << currentBuffer << "\n";
+            DEBUG::validateEBOBuffer(id);
             Buffer::bufferData(GL_ELEMENT_ARRAY_BUFFER, data, usage);
         }
     };
