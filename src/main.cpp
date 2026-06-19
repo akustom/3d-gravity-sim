@@ -32,6 +32,18 @@ struct Camera {
     [[nodiscard]] glm::mat4 getViewMatrix() const {
         return glm::lookAt(position, target, cameraUp);
     }
+
+    void pushViewMatrix(const glu::ShaderProgram& program, const char* view_uniform) const {
+        if (!isViewDirty)
+            return;
+        GLint viewLoc = glGetUniformLocation(program.id, view_uniform);
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(getViewMatrix()));
+    }
+
+    void pushProjectionMatrix(const glu::ShaderProgram& program, const char* projection_uniform) {
+        GLint projectionLoc = glGetUniformLocation(program.id, projection_uniform);
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+    }
 };
 
 struct Mesh {
