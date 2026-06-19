@@ -8,10 +8,10 @@
 #include <sstream>
 #include <debug.hpp>
 
-inline std::string readFile(const std::string& filePath) {
-    std::ifstream file(filePath);
+inline std::string readFile(const std::string& file_path) {
+    std::ifstream file(file_path);
     if (!file.is_open()) {
-        std::cerr << "failed to open file: " << filePath << "\n";
+        std::cerr << "failed to open file: " << file_path << "\n";
         return "";
     }
     std::stringstream buffer;
@@ -52,8 +52,8 @@ namespace glu {
         GLuint id = 0;
         int bufferIndex = -1;
 
-        Shader(const std::string& filePath, const GLenum shaderType) {
-            compile(filePath, shaderType);
+        Shader(const std::string& file_path, const GLenum shader_type) {
+            compile(file_path, shader_type);
         }
         ~Shader() {
             glDeleteShader(id);
@@ -75,11 +75,11 @@ namespace glu {
             return *this;
         }
 
-        void compile(const std::string& filePath, const GLenum shaderType) {
-            std::string sourceCode = readFile(filePath);
+        void compile(const std::string& file_path, const GLenum shader_type) {
+            std::string sourceCode = readFile(file_path);
             const char* c_sourceCode = sourceCode.c_str();
 
-            id = glCreateShader(shaderType);
+            id = glCreateShader(shader_type);
             glShaderSource(id, 1, &c_sourceCode, nullptr);
             glCompileShader(id);
         }
@@ -112,14 +112,13 @@ namespace glu {
             return *this;
         }
 
-
-        void build(const Shader& vertexShader, const Shader& fragmentShader) const {
-            glAttachShader(id, vertexShader.id);
-            glAttachShader(id, fragmentShader.id);
+        void build(const Shader& vertex_shader, const Shader& fragment_shader) const {
+            glAttachShader(id, vertex_shader.id);
+            glAttachShader(id, fragment_shader.id);
             glLinkProgram(id);
 
-            glDeleteShader(vertexShader.id);
-            glDeleteShader(fragmentShader.id);
+            glDetachShader(id, vertex_shader.id);
+            glDetachShader(id, fragment_shader.id);
         }
 
         void use() const {
@@ -216,13 +215,13 @@ namespace glu {
             return *this;
         }
 
-        void bind(GLenum bufferType) const {
-            glBindBuffer(bufferType, id);
+        void bind(GLenum buffer_type) const {
+            glBindBuffer(buffer_type, id);
         }
 
         template <trivially_copyable Type>
-        static void bufferData(GLenum bufferType, const std::vector<Type>& data, GLenum usage) {
-            glBufferData(bufferType, static_cast<GLsizeiptr>(data.size() * sizeof(Type)), data.data(), usage);
+        static void bufferData(GLenum buffer_type, const std::vector<Type>& data, GLenum usage) {
+            glBufferData(buffer_type, static_cast<GLsizeiptr>(data.size() * sizeof(Type)), data.data(), usage);
         }
     };
 
