@@ -22,6 +22,20 @@ inline std::string readFile(const std::string& filePath) {
 template <typename T>
     concept trivially_copyable = std::is_trivially_copyable_v<T>;
 
+template<typename T>
+concept is_glm = requires {
+    typename T::value_type;
+    { T::length() } -> std::convertible_to<glm::length_t>;
+};
+
+template<typename T>
+inline constexpr auto pushUniform = [](const GLuint& location, const T& data) {
+    if constexpr (std::is_same_v<T,glm::mat4>)
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(data));
+    else
+        std::cerr << "uniform type is currently unsupported\n";
+};
+
 namespace glu {
     int getGLTypeSize(auto type) {
         switch (type) {
