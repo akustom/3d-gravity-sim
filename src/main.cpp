@@ -86,8 +86,8 @@ int main() {
 
     glViewport(0, 0, 960, 540);
 
-    glu::Shader vertex{SOURCE_DIR "shaders/vertexShader.vert", GL_VERTEX_SHADER};
-    glu::Shader fragment{SOURCE_DIR "shaders/fragmentShader.frag", GL_FRAGMENT_SHADER};
+    glu::Shader vertex{SOURCE_DIR "assets/shaders/vertexShader.glsl", GL_VERTEX_SHADER};
+    glu::Shader fragment{SOURCE_DIR "assets/shaders/fragmentShader.glsl", GL_FRAGMENT_SHADER};
 
     glu::ShaderProgram shaderProgram;
     shaderProgram.build(vertex, fragment);
