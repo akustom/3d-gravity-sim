@@ -111,6 +111,12 @@ namespace glu {
         void use() const {
             glUseProgram(id);
         }
+
+        template <typename T>
+        void pushToUniform(const char* uniform, const T& data) const {
+            GLint location = glGetUniformLocation(id, uniform);
+            pushUniform<T>(location, data);
+        }
     };
 
     class VAO {
