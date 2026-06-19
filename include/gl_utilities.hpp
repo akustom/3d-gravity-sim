@@ -245,4 +245,13 @@ namespace glu {
             Buffer::bufferData(GL_ELEMENT_ARRAY_BUFFER, data, usage);
         }
     };
+
+    struct UBO : Buffer {
+        void bind() const {
+            Buffer::bind(GL_UNIFORM_BUFFER);
+        }
+        void bufferData(const int data_size, GLenum usage) {
+            glBufferData(GL_UNIFORM_BUFFER, data_size, nullptr, usage);
+        }
+    };
 }
