@@ -22,6 +22,13 @@ struct Camera {
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), 960.0f/540.0f, 0.1f, 100.0f);
 
+    bool isViewDirty = true;
+
+    void posAdd(const glm::vec3& displace) {
+        position += displace;
+        isViewDirty = !isViewDirty;
+    }
+
     [[nodiscard]] glm::mat4 getViewMatrix() const {
         return glm::lookAt(position, target, cameraUp);
     }
