@@ -46,6 +46,12 @@ namespace glu {
         return current;
     }
 
+    inline GLuint getCurrentEBO() {
+        GLint current = 0;
+        glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &current);
+        return current;
+    }
+
     struct Shader {
         GLuint id = 0;
         int bufferIndex = -1;
@@ -143,7 +149,8 @@ namespace glu {
         }
     };
 
-    class VBO {
+    struct Buffer {
+    protected:
         GLuint id = 0;
 
         void gen() {
@@ -151,20 +158,20 @@ namespace glu {
         }
 
     public:
-        VBO() {
+        Buffer() {
             gen();
         }
-        ~VBO() {
+        ~Buffer() {
             glDeleteBuffers(1, &id);
         }
-        VBO(const VBO&) = delete;
-        VBO& operator=(const VBO&) = delete;
+        Buffer(const Buffer&) = delete;
+        Buffer& operator=(const Buffer&) = delete;
 
-        VBO(VBO&& other) noexcept {
+        Buffer(Buffer&& other) noexcept {
             this->id = other.id;
             other.id = 0;
         }
-        VBO& operator=(VBO&& other) noexcept {
+        Buffer& operator=(Buffer&& other) noexcept {
             if (this != &other) {
                 glDeleteBuffers(1, &id);
 
@@ -174,16 +181,37 @@ namespace glu {
             return *this;
         }
 
-        void bind() const {
-            glBindBuffer(GL_ARRAY_BUFFER, id);
+        void bind(GLenum bufferType) const {
+            glBindBuffer(bufferType, id);
         }
 
         template <trivially_copyable Type>
-        void bufferData(const std::vector<Type>& data, GLenum usage) const {
-            if (getCurrentVBO() != id)
-                std::cerr << "buffered data to an unexpected VBO" << " | attempted id: " << id << " | current id:" << getCurrentVBO() << "\n";
+        static void bufferData(GLenum bufferType, const std::vector<Type>& data, GLenum usage) {
+            glBufferData(bufferType, static_cast<GLsizeiptr>(data.size() * sizeof(Type)), data.data(), usage);
+        }
+    };
 
-            glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.size() * sizeof(Type)), data.data(), usage);
+    struct VBO : Buffer {
+        void bind() const {
+            Buffer::bind(GL_ARRAY_BUFFER);
+        }
+        void bufferData(const auto& data, GLenum usage) {
+            GLuint currentBuffer = getCurrentVBO();
+            if (currentBuffer != id)
+                std::cerr << "buffered data to an unexpected VBO" << " | attempted id: " << id << " | current id:" << currentBuffer << "\n";
+            Buffer::bufferData(GL_ARRAY_BUFFER, data, usage);
+        }
+    };
+
+    struct EBO : Buffer {
+        void bind() const {
+            Buffer::bind(GL_ELEMENT_ARRAY_BUFFER);
+        }
+        void bufferData(const auto& data, GLenum usage) {
+            GLuint currentBuffer = getCurrentEBO();
+            if (currentBuffer != id)
+                std::cerr << "buffered data to an unexpected EBO" << " | attempted id: " << id << " | current id:" << currentBuffer << "\n";
+            Buffer::bufferData(GL_ELEMENT_ARRAY_BUFFER, data, usage);
         }
     };
 }
