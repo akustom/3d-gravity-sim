@@ -26,7 +26,7 @@ struct Camera {
 
     void posAdd(const glm::vec3& displace) {
         position += displace;
-        isViewDirty = !isViewDirty;
+        isViewDirty = !true;
     }
 
     [[nodiscard]] glm::mat4 getViewMatrix() const {
@@ -53,6 +53,7 @@ struct Mesh {
         {{0.25f, -0.25f, 0.0f},     {0.0f, 0.0f, 1.0f}},
         {{0.25f, 0.25f, 0.0f},      {1.0f, 0.0f, 0.0f}},
     };
+
     std::vector<glm::uvec3> indices = {
         {0, 1, 2},
         {0, 3, 2}
@@ -88,11 +89,11 @@ int main() {
 
     glViewport(0, 0, 960, 540);
 
-    glu::Shader vertex{SOURCE_DIR "assets/shaders/vertexShader.glsl", GL_VERTEX_SHADER};
-    glu::Shader fragment{SOURCE_DIR "assets/shaders/fragmentShader.glsl", GL_FRAGMENT_SHADER};
-
     glu::ShaderProgram shaderProgram;
-    shaderProgram.build(vertex, fragment);
+    shaderProgram.build(
+        {SOURCE_DIR "assets/shaders/vertexShader.glsl", GL_VERTEX_SHADER},
+        {SOURCE_DIR "assets/shaders/fragmentShader.glsl", GL_FRAGMENT_SHADER}
+        );
     shaderProgram.use();
 
     Mesh triangle;
