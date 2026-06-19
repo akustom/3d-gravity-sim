@@ -18,11 +18,10 @@ inline std::string readFile(const std::string& filePath) {
     return buffer.str();
 }
 
-
-namespace glu {
-    template <typename T>
+template <typename T>
     concept trivially_copyable = std::is_trivially_copyable_v<T>;
 
+namespace glu {
     int getGLTypeSize(auto type) {
         switch (type) {
             case GL_FLOAT:  return sizeof(float);
