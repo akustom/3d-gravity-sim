@@ -10,7 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 // just my utilities
 #include <glw/glw.hpp>
-#include <gfx/vertex.hpp>
+#include <gfx/gfx.hpp>
 
 struct Camera {
     glm::vec3 position = {0.0f, 0.0f, 5.0f};
