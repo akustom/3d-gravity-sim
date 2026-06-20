@@ -33,13 +33,13 @@ struct Camera {
         return glm::lookAt(position, target, cameraUp);
     }
 
-    void pushViewMatrix(const glu::ShaderProgram& program, glu::UBO& ubo) const {
+    void pushViewMatrix(glu::UBO& ubo) const {
         if (!isViewDirty)
             return;
         ubo.pushUniform<glm::mat4>(0, getViewMatrix());
     }
 
-    void pushProjectionMatrix(const glu::ShaderProgram& program, glu::UBO& ubo) const {
+    void pushProjectionMatrix(glu::UBO& ubo) const {
         ubo.pushUniform<glm::mat4>(4, projection);
     }
 };
@@ -123,8 +123,8 @@ int main() {
     Camera camera;
     glu::UBO cameraUBO{0};
     cameraUBO.allocateBuffer(8);
-    camera.pushViewMatrix(shaderProgram, cameraUBO);
-    camera.pushProjectionMatrix(shaderProgram, cameraUBO);
+    camera.pushViewMatrix(cameraUBO);
+    camera.pushProjectionMatrix(cameraUBO);
 
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
@@ -132,7 +132,7 @@ int main() {
 
         glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr, static_cast<GLsizei>(particles.instancePos.size()));
         camera.position = glm::angleAxis(glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * camera.position;
-        camera.pushViewMatrix(shaderProgram, cameraUBO);
+        camera.pushViewMatrix(cameraUBO);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
