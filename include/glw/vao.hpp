@@ -1,10 +1,11 @@
 #pragma once
 
+#include <glad/glad.h>
 #include "debug.hpp"
-#include "core.hpp"
+#include "gl_utils.hpp"
 
 
-namespace glu {
+namespace glw {
     class VAO {
         GLuint id = 0;
 

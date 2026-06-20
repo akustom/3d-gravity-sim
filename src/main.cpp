@@ -9,7 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 // just my utilities
-#include <glu/glu.hpp>
+#include <glw/glw.hpp>
 #include <utilities.hpp>
 
 struct Camera {
@@ -33,13 +33,13 @@ struct Camera {
         return glm::lookAt(position, target, cameraUp);
     }
 
-    void pushViewMatrix(const glu::UBO& ubo) const {
+    void pushViewMatrix(const glw::UBO& ubo) const {
         if (!isViewDirty)
             return;
         ubo.pushUniform<glm::mat4>(0, getViewMatrix());
     }
 
-    void pushProjectionMatrix(const glu::UBO& ubo) const {
+    void pushProjectionMatrix(const glw::UBO& ubo) const {
         ubo.pushUniform<glm::mat4>(4, projection);
     }
 };
@@ -88,7 +88,7 @@ int main() {
 
     glViewport(0, 0, 960, 540);
 
-    glu::ShaderProgram shaderProgram;
+    glw::ShaderProgram shaderProgram;
     shaderProgram.build(
         {SOURCE_DIR "assets/shaders/vertexShader.glsl", GL_VERTEX_SHADER},
         {SOURCE_DIR "assets/shaders/fragmentShader.glsl", GL_FRAGMENT_SHADER}
@@ -97,14 +97,14 @@ int main() {
 
     Mesh triangle;
 
-    glu::VAO vertexVAO;
+    glw::VAO vertexVAO;
     vertexVAO.bind();
 
-    glu::VBO triangleVBO;
+    glw::VBO triangleVBO;
     triangleVBO.bind();
     triangleVBO.bufferData(triangle.vertices, GL_STATIC_DRAW);
 
-    glu::EBO triangleEBO;
+    glw::EBO triangleEBO;
     triangleEBO.bind();
     triangleEBO.bufferData(triangle.indices, GL_STATIC_DRAW);
 
@@ -113,7 +113,7 @@ int main() {
 
     Particles particles;
 
-    glu::VBO instanceVBO;
+    glw::VBO instanceVBO;
     instanceVBO.bind();
     instanceVBO.bufferData(particles.instancePos, GL_STATIC_DRAW);
 
@@ -121,7 +121,7 @@ int main() {
     vertexVAO.setAttributeDivisor(2, 1);
 
     Camera camera;
-    glu::UBO cameraUBO;
+    glw::UBO cameraUBO;
     cameraUBO.bind(0);
     cameraUBO.allocateBuffer(8);
     camera.pushViewMatrix(cameraUBO);

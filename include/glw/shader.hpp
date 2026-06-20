@@ -1,9 +1,10 @@
 #pragma once
 
-#include "core.hpp"
+#include <glad/glad.h>
+#include <io_utilities.hpp>
 
 
-namespace glu {
+namespace glw {
     struct Shader {
         GLuint id = 0;
         int bufferIndex = -1;

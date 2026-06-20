@@ -1,11 +1,12 @@
 #pragma once
 
 #include <vector>
+#include <glad/glad.h>
 #include "debug.hpp"
-#include "core.hpp"
+#include "gl_utils.hpp"
 
 
-namespace glu {
+namespace glw {
     struct Buffer {
     protected:
         GLuint id = 0;
