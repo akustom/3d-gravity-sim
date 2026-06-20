@@ -243,7 +243,8 @@ namespace glu {
         }
 
         /**pass vec4 counts (16 byte chunks) into vec4_offset*/
-        static void allocateBuffer(const GLintptr vec4_count) {
+        void allocateBuffer(const GLintptr vec4_count) const {
+            DEBUG::validateUBOAllocate(id);
             glBufferData(GL_UNIFORM_BUFFER, vec4_count * 16, nullptr, GL_DYNAMIC_DRAW);
         }
 
