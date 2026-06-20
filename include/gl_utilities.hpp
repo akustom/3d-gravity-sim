@@ -23,25 +23,24 @@ template <typename T>
     concept trivially_copyable = std::is_trivially_copyable_v<T>;
 
 template<typename T>
-inline constexpr auto getPtr = [](const T& data) {
+constexpr auto getPtr(const T& data) {
     if constexpr (std::is_same_v<T,glm::mat4>)
         return glm::value_ptr(data);
     else
         std::cerr << "uniform type is currently unsupported\n";
 };
 
-namespace glu {
-    int getGLTypeSize(auto type) {
-        switch (type) {
-            case GL_FLOAT:  return sizeof(float);
-            case GL_INT:    return sizeof(int);
-            case GL_DOUBLE: return sizeof(double);
-            default:
-                std::cerr << "unexpected GL type: " << type << "\n";
-                return 0;
-        }
+constexpr int getGLTypeSize(const GLenum type) {
+    switch (type) {
+        case GL_FLOAT:  return sizeof(float);
+        case GL_INT:    return sizeof(int);
+        case GL_DOUBLE: return sizeof(double);
+        default:
+            throw std::invalid_argument("unexpected gl type");
     }
+}
 
+namespace glu {
     struct Shader {
         GLuint id = 0;
         int bufferIndex = -1;
@@ -243,13 +242,15 @@ namespace glu {
             Buffer::bind(GL_UNIFORM_BUFFER);
         }
 
-        static void allocateBuffer(GLsizeiptr element_size) {
-            glBufferData(GL_UNIFORM_BUFFER, element_size * 16, nullptr, GL_DYNAMIC_DRAW);
+        /**pass vec4 counts (16 byte chunks) into vec4_offset*/
+        static void allocateBuffer(GLintptr vec4_count) {
+            glBufferData(GL_UNIFORM_BUFFER, vec4_count * 16, nullptr, GL_DYNAMIC_DRAW);
         }
 
+        /**pass vec4 counts (16 byte chunks) into vec4_offset*/
         template <trivially_copyable D>
-        void pushUniform(GLintptr offset, D data) {
-            glBufferSubData(GL_UNIFORM_BUFFER, offset * 16, sizeof(D), getPtr<D>(data));
+        void pushUniform(GLintptr vec4_offset, D data) {
+            glBufferSubData(GL_UNIFORM_BUFFER, vec4_offset * 16, sizeof(D), getPtr(data));
         }
     };
 }
