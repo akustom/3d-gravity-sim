@@ -1,3 +1,4 @@
+#pragma once
 #include "glad/glad.h"
 
 #ifndef NDEBUG
@@ -21,6 +22,12 @@ private:
         return current;
     }
 
+    static GLuint getCurrentUBO() {
+        GLint current = 0;
+        glGetIntegerv(GL_UNIFORM_BUFFER_BINDING, &current);
+        return current;
+    }
+
 public:
     static void validateVAOLink(GLuint id) {
         if (getCurrentVAO() != id)
@@ -39,6 +46,15 @@ public:
     static void validateEBOBuffer(GLuint id) {
         if (getCurrentEBO() != id)
             std::cerr << "buffered data to an unexpected EBO" << " | attempted id: " << id << " | current id:" << getCurrentEBO() << "\n";
+    }
+
+    static void validateUBOAllocate(GLuint id) {
+        if (getCurrentUBO() != id)
+            std::cerr << "buffered data to an unexpected UBO" << " | attempted id: " << id << " | current id:" << getCurrentUBO() << "\n";
+    }
+    static void validateUBOPush(GLuint id) {
+        if (getCurrentUBO() != id)
+            std::cerr << "pushed uniform data to an unexpected UBO" << " | attempted id: " << id << " | current id:" << getCurrentUBO() << "\n";
     }
 };
 

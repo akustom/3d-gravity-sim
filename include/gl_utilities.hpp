@@ -23,15 +23,9 @@ template <typename T>
     concept trivially_copyable = std::is_trivially_copyable_v<T>;
 
 template<typename T>
-concept is_glm = requires {
-    typename T::value_type;
-    { T::length() } -> std::convertible_to<glm::length_t>;
-};
-
-template<typename T>
-inline constexpr auto pushUniform = [](const GLuint& location, const T& data) {
+inline constexpr auto getPtr = [](const T& data) {
     if constexpr (std::is_same_v<T,glm::mat4>)
-        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(data));
+        return glm::value_ptr(data);
     else
         std::cerr << "uniform type is currently unsupported\n";
 };
@@ -124,12 +118,6 @@ namespace glu {
         void use() const {
             glUseProgram(id);
         }
-
-        template <typename T>
-        void pushToUniform(const char* uniform, const T& data) const {
-            GLint location = glGetUniformLocation(id, uniform);
-            pushUniform<T>(location, data);
-        }
     };
 
     class VAO {
@@ -219,9 +207,9 @@ namespace glu {
             glBindBuffer(buffer_type, id);
         }
 
-        template <trivially_copyable Type>
-        static void bufferData(GLenum buffer_type, const std::vector<Type>& data, GLenum usage) {
-            glBufferData(buffer_type, static_cast<GLsizeiptr>(data.size() * sizeof(Type)), data.data(), usage);
+        template <trivially_copyable T>
+        static void bufferData(GLenum buffer_type, const std::vector<T>& data, GLenum usage) {
+            glBufferData(buffer_type, static_cast<GLsizeiptr>(data.size() * sizeof(T)), data.data(), usage);
         }
     };
 
@@ -246,11 +234,22 @@ namespace glu {
     };
 
     struct UBO : Buffer {
+        explicit UBO(const GLint binding) {
+            gen();
+            glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
+        }
+
         void bind() const {
             Buffer::bind(GL_UNIFORM_BUFFER);
         }
-        void bufferData(const int data_size, GLenum usage) {
-            glBufferData(GL_UNIFORM_BUFFER, data_size, nullptr, usage);
+
+        static void allocateBuffer(GLsizeiptr element_size) {
+            glBufferData(GL_UNIFORM_BUFFER, element_size * 16, nullptr, GL_DYNAMIC_DRAW);
+        }
+
+        template <trivially_copyable D>
+        void pushUniform(GLintptr offset, D data) {
+            glBufferSubData(GL_UNIFORM_BUFFER, offset * 16, sizeof(D), getPtr<D>(data));
         }
     };
 }
