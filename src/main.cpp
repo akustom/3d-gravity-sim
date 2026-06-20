@@ -40,7 +40,7 @@ struct Camera {
     }
 
     void pushProjectionMatrix(const glu::ShaderProgram& program, glu::UBO& ubo) const {
-        ubo.pushUniform<glm::mat4>(1, projection);
+        ubo.pushUniform<glm::mat4>(4, projection);
     }
 };
 
@@ -60,11 +60,12 @@ struct Mesh {
 
 
 struct Particles {
-    std::vector<glm::dvec3> instancePos = {
-        {0.0, 0.0, 0.0},
-        {0.0, 1.0, 0.0},
-        {1.0, 0.0, 0.0},
-        {-1.0, 0.0, 0.0}
+    std::vector<glm::dvec4> instancePos = {
+        {0.0, 0.0, 0.0, 1.0},
+        {0.0, 1.0, 0.0, 1.0},
+        {1.0, 0.0, 0.0, 1.0},
+        {-1.0, 0.0, 0.0, 1.0},
+        {0.0, -1.0, 0.0, 1.0}
     };
 };
 
@@ -107,8 +108,8 @@ int main() {
     triangleEBO.bind();
     triangleEBO.bufferData(triangle.indices, GL_STATIC_DRAW);
 
-    vertexVAO.linkAttribute(0, 3, GL_FLOAT, 7, 0); // links mesh vertices
-    vertexVAO.linkAttribute(1, 3, GL_FLOAT, 7, 4); // links mesh colors
+    vertexVAO.linkAttribute(0, 3, GL_FLOAT, 6, 0); // links mesh vertices
+    vertexVAO.linkAttribute(1, 3, GL_FLOAT, 6, 3); // links mesh colors
 
     Particles particles;
 
@@ -116,12 +117,12 @@ int main() {
     instanceVBO.bind();
     instanceVBO.bufferData(particles.instancePos, GL_STATIC_DRAW);
 
-    vertexVAO.linkAttribute(2, 3, GL_DOUBLE, 3, 0);
+    vertexVAO.linkAttribute(2, 4, GL_DOUBLE, 4, 0);
     vertexVAO.setAttributeDivisor(2, 1);
 
     Camera camera;
     glu::UBO cameraUBO{0};
-    cameraUBO.allocateBuffer(2);
+    cameraUBO.allocateBuffer(8);
     camera.pushViewMatrix(shaderProgram, cameraUBO);
     camera.pushProjectionMatrix(shaderProgram, cameraUBO);
 
