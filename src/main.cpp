@@ -10,7 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 // just my utilities
 #include <glw/glw.hpp>
-#include <utilities.hpp>
+#include <gfx/vertex.hpp>
 
 struct Camera {
     glm::vec3 position = {0.0f, 0.0f, 5.0f};
@@ -45,7 +45,7 @@ struct Camera {
 };
 
 struct Mesh {
-    std::vector<util::vertex> vertices = {
+    std::vector<gfx::vertex> vertices = {
         {{-0.25f, 0.25f, 0.0f},     {1.0f, 0.0f, 0.0f}},
         {{-0.25f, -0.25f, 0.0f},    {0.0f, 1.0f, 0.0f}},
         {{0.25f, -0.25f, 0.0f},     {0.0f, 0.0f, 1.0f}},

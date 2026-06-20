@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-namespace util {
+namespace gfx {
     struct vertex {
         glm::vec3 pos;
         glm::vec3 color;
