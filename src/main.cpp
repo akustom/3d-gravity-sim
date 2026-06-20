@@ -121,7 +121,8 @@ int main() {
     vertexVAO.setAttributeDivisor(2, 1);
 
     Camera camera;
-    glu::UBO cameraUBO{0};
+    glu::UBO cameraUBO;
+    cameraUBO.bind(0);
     cameraUBO.allocateBuffer(8);
     camera.pushViewMatrix(cameraUBO);
     camera.pushProjectionMatrix(cameraUBO);

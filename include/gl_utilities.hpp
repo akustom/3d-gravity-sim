@@ -233,13 +233,12 @@ namespace glu {
     };
 
     struct UBO : Buffer {
-        explicit UBO(const GLint binding) {
+        explicit UBO() {
             gen();
-            glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
         }
 
-        void bind() const {
-            Buffer::bind(GL_UNIFORM_BUFFER);
+        void bind(const GLint binding_point) const {
+            glBindBufferBase(GL_UNIFORM_BUFFER, binding_point, id);
         }
 
         /**pass vec4 counts (16 byte chunks) into vec4_offset*/
