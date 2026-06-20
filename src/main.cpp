@@ -12,38 +12,6 @@
 #include <glw/glw.hpp>
 #include <gfx/gfx.hpp>
 
-struct Camera {
-    glm::vec3 position = {0.0f, 0.0f, 5.0f};
-    glm::vec3 target = {0.0f, 0.0f, 0.0f};
-
-    glm::vec3 cameraFront = glm::normalize(position - target);
-    glm::vec3 cameraRight = glm::cross({0.0f, 1.0f, 0.0f}, cameraFront);
-    glm::vec3 cameraUp = glm::cross(cameraFront, cameraRight);
-
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 960.0f/540.0f, 0.1f, 100.0f);
-
-    bool isViewDirty = true;
-
-    void posAdd(const glm::vec3& displace) {
-        position += displace;
-        isViewDirty = true;
-    }
-
-    [[nodiscard]] glm::mat4 getViewMatrix() const {
-        return glm::lookAt(position, target, cameraUp);
-    }
-
-    void pushViewMatrix(const glw::UBO& ubo) const {
-        if (!isViewDirty)
-            return;
-        ubo.pushUniform<glm::mat4>(0, getViewMatrix());
-    }
-
-    void pushProjectionMatrix(const glw::UBO& ubo) const {
-        ubo.pushUniform<glm::mat4>(4, projection);
-    }
-};
-
 struct Mesh {
     std::vector<gfx::vertex> vertices = {
         {{-0.25f, 0.25f, 0.0f},     {1.0f, 0.0f, 0.0f}},
@@ -120,7 +88,7 @@ int main() {
     vertexVAO.linkAttribute(2, 4, GL_DOUBLE, 4, 0);
     vertexVAO.setAttributeDivisor(2, 1);
 
-    Camera camera;
+    gfx::Camera camera;
     glw::UBO cameraUBO;
     cameraUBO.bind(0);
     cameraUBO.allocateBuffer(8);
