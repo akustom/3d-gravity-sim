@@ -9,7 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 // just my utilities
-#include <gl_utilities.hpp>
+#include <glu/glu.hpp>
 #include <utilities.hpp>
 
 struct Camera {
@@ -33,13 +33,13 @@ struct Camera {
         return glm::lookAt(position, target, cameraUp);
     }
 
-    void pushViewMatrix(glu::UBO& ubo) const {
+    void pushViewMatrix(const glu::UBO& ubo) const {
         if (!isViewDirty)
             return;
         ubo.pushUniform<glm::mat4>(0, getViewMatrix());
     }
 
-    void pushProjectionMatrix(glu::UBO& ubo) const {
+    void pushProjectionMatrix(const glu::UBO& ubo) const {
         ubo.pushUniform<glm::mat4>(4, projection);
     }
 };
