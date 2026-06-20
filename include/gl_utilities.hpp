@@ -154,7 +154,7 @@ namespace glu {
             glBindVertexArray(id);
         }
 
-        void linkAttribute(int location, int size, GLenum type, int element_stride, int element_offset) const {
+        void linkAttribute(const int location, const int size, const GLenum type, const int element_stride, const int element_offset) const {
             DEBUG::validateVAOLink(id);
 
             glVertexAttribPointer(
@@ -164,7 +164,7 @@ namespace glu {
             glEnableVertexAttribArray(location);
         }
 
-        void setAttributeDivisor(int location, int divisor) const {
+        void setAttributeDivisor(const int location, const int divisor) const {
             DEBUG::validateVAODivisor(id);
             glVertexAttribDivisor(location, divisor);
         }
@@ -243,13 +243,14 @@ namespace glu {
         }
 
         /**pass vec4 counts (16 byte chunks) into vec4_offset*/
-        static void allocateBuffer(GLintptr vec4_count) {
+        static void allocateBuffer(const GLintptr vec4_count) {
             glBufferData(GL_UNIFORM_BUFFER, vec4_count * 16, nullptr, GL_DYNAMIC_DRAW);
         }
 
         /**pass vec4 counts (16 byte chunks) into vec4_offset*/
         template <trivially_copyable D>
-        void pushUniform(GLintptr vec4_offset, D data) {
+        void pushUniform(const GLintptr vec4_offset, const D& data) const {
+            DEBUG::validateUBOPush(id);
             glBufferSubData(GL_UNIFORM_BUFFER, vec4_offset * 16, sizeof(D), getPtr(data));
         }
     };

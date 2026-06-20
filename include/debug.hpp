@@ -65,5 +65,7 @@ class DEBUG {
     static void validateVAODivisor(GLuint id) {}
     static void validateVBOBuffer(GLuint id) {}
     static void validateEBOBuffer(GLuint id) {}
+    static void validateUBOAllocate(GLuint id) {}
+    static void validateUBOPush(GLuint id) {}
 };
 #endif
