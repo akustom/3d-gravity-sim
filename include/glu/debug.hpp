@@ -1,5 +1,7 @@
 #pragma once
-#include "glad/glad.h"
+
+#include <glad/glad.h>
+
 
 #ifndef NDEBUG
 class DEBUG {
