@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
-#include <io_utilities.hpp>
+#include <io_utils.hpp>
 
 
 namespace glw {
