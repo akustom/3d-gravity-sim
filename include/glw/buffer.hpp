@@ -20,7 +20,7 @@ namespace glw {
             gen();
         }
 
-        virtual ~Buffer() {
+        ~Buffer() {
             glDeleteBuffers(1, &id);
         }
         Buffer(const Buffer&) = delete;
