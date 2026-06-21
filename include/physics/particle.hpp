@@ -11,7 +11,7 @@ namespace phy {
 
         std::vector<double> masses;
 
-        void createParticle(const double& mass, const glm::vec3& position) {
+        void createParticle(const double mass, const glm::vec3& position) {
             positions.emplace_back(position, 1);
             velocities.emplace_back(0, 0, 0, 0);
             accelerations.emplace_back(0, 0, 0, 0);
