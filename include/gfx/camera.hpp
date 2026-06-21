@@ -29,7 +29,7 @@ namespace gfx {
         float mouseSensitivity  = SENSITIVITY;
         float fieldOfView       = FOV;
 
-        GLFWwindow* m_window = nullptr;
+        GLFWwindow* window = nullptr;
 
         float lastX, lastY;
         bool firstMouse = true;
@@ -37,7 +37,7 @@ namespace gfx {
         bool isViewDirty = true;
 
         void use(GLFWwindow *window, const glw::UBO& camera_ubo) {
-            this->m_window = window;
+            this->window = window;
             glfwSetWindowUserPointer(window, this);
             camera_ubo.bind(0);
             camera_ubo.allocateBuffer(8);
@@ -107,7 +107,7 @@ namespace gfx {
 
         void pushProjectionMatrix(const glw::UBO& ubo) const {
             int width, height;
-            glfwGetFramebufferSize(m_window, &width, &height);
+            glfwGetFramebufferSize(window, &width, &height);
             ubo.pushUniform(
                 4, glm::perspective(glm::radians(fieldOfView),
                 static_cast<float>(width)/static_cast<float>(height),
