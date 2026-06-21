@@ -12,30 +12,6 @@
 #include <glw/glw.hpp>
 #include <gfx/gfx.hpp>
 
-struct Mesh {
-    std::vector<gfx::vertex> vertices = {
-        {{-0.25f, 0.25f, 0.0f},     {1.0f, 0.0f, 0.0f}},
-        {{-0.25f, -0.25f, 0.0f},    {0.0f, 1.0f, 0.0f}},
-        {{0.25f, -0.25f, 0.0f},     {0.0f, 0.0f, 1.0f}},
-        {{0.25f, 0.25f, 0.0f},      {1.0f, 0.0f, 0.0f}},
-    };
-
-    std::vector<glm::uvec3> indices = {
-        {0, 1, 2},
-        {0, 3, 2}
-    };
-};
-
-
-struct Particles {
-    std::vector<glm::dvec4> instancePos = {
-        {0.0, 0.0, 0.0, 1.0},
-        {0.0, 1.0, 0.0, 1.0},
-        {1.0, 0.0, 0.0, 1.0},
-        {-1.0, 0.0, 0.0, 1.0},
-        {0.0, -1.0, 0.0, 1.0}
-    };
-};
 
 int main() {
     glfwInit();
@@ -60,26 +36,28 @@ int main() {
     shaderProgram.build(
         {SOURCE_DIR "assets/shaders/vertexShader.glsl", GL_VERTEX_SHADER},
         {SOURCE_DIR "assets/shaders/fragmentShader.glsl", GL_FRAGMENT_SHADER}
-        );
+    );
     shaderProgram.use();
 
-    Mesh triangle;
+    gfx::Mesh square;
+    gfx::makeSquare(square);
+    gfx::makePolygon(1.0f, 64, square);
 
     glw::VAO vertexVAO;
     vertexVAO.bind();
 
-    glw::VBO triangleVBO;
-    triangleVBO.bind();
-    triangleVBO.bufferData(triangle.vertices, GL_STATIC_DRAW);
+    glw::VBO squareVBO;
+    squareVBO.bind();
+    squareVBO.bufferData(square.vertices, GL_STATIC_DRAW);
 
-    glw::EBO triangleEBO;
-    triangleEBO.bind();
-    triangleEBO.bufferData(triangle.indices, GL_STATIC_DRAW);
+    glw::EBO squareEBO;
+    squareEBO.bind();
+    squareEBO.bufferData(square.indices, GL_STATIC_DRAW);
 
     vertexVAO.linkAttribute(0, 3, GL_FLOAT, 6, 0); // links mesh vertices
     vertexVAO.linkAttribute(1, 3, GL_FLOAT, 6, 3); // links mesh colors
 
-    Particles particles;
+    gfx::Instances particles;
 
     glw::VBO instanceVBO;
     instanceVBO.bind();
@@ -99,7 +77,7 @@ int main() {
         glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr, static_cast<GLsizei>(particles.instancePos.size()));
+        glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(3 * square.indices.size()), GL_UNSIGNED_INT, nullptr, static_cast<GLsizei>(particles.instancePos.size()));
         camera.position = glm::angleAxis(glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * camera.position;
         camera.pushViewMatrix(cameraUBO);
 
