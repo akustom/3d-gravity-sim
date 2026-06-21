@@ -5,61 +5,59 @@
 
 
 #ifndef NDEBUG
-class DEBUG {
-private:
-    static GLuint getCurrentVAO() {
+namespace DEBUG {
+    inline GLuint getCurrentVAO() {
         GLint current = 0;
         glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &current);
         return current;
     }
 
-    static GLuint getCurrentVBO() {
+    inline GLuint getCurrentVBO() {
         GLint current = 0;
         glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &current);
         return current;
     }
 
-    static GLuint getCurrentEBO() {
+    inline GLuint getCurrentEBO() {
         GLint current = 0;
         glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &current);
         return current;
     }
 
-    static GLuint getCurrentUBO() {
+    inline GLuint getCurrentUBO() {
         GLint current = 0;
         glGetIntegerv(GL_UNIFORM_BUFFER_BINDING, &current);
         return current;
     }
 
-public:
-    static void validateVAOLink(GLuint id) {
+    inline void validateVAOLink(GLuint id) {
         if (getCurrentVAO() != id)
             std::cerr << "linked attributes with an unexpected VAO" << " | attempted id: " << id << " | current id:" << getCurrentVAO() << "\n";
     }
-    static void validateVAODivisor(GLuint id) {
+    inline void validateVAODivisor(GLuint id) {
         if (getCurrentVAO() != id)
             std::cerr << "set attribute divisor with an unexpected VAO" << " | attempted id: " << id << " | current id:" << getCurrentVAO() << "\n";
     }
 
-    static void validateVBOBuffer(GLuint id) {
+    inline void validateVBOBuffer(GLuint id) {
         if (getCurrentVBO() != id)
             std::cerr << "buffered data to an unexpected VBO" << " | attempted id: " << id << " | current id:" << getCurrentVBO() << "\n";
     }
 
-    static void validateEBOBuffer(GLuint id) {
+    inline void validateEBOBuffer(GLuint id) {
         if (getCurrentEBO() != id)
             std::cerr << "buffered data to an unexpected EBO" << " | attempted id: " << id << " | current id:" << getCurrentEBO() << "\n";
     }
 
-    static void validateUBOAllocate(GLuint id) {
+    inline void validateUBOAllocate(GLuint id) {
         if (getCurrentUBO() != id)
             std::cerr << "buffered data to an unexpected UBO" << " | attempted id: " << id << " | current id:" << getCurrentUBO() << "\n";
     }
-    static void validateUBOPush(GLuint id) {
+    inline void validateUBOPush(GLuint id) {
         if (getCurrentUBO() != id)
             std::cerr << "pushed uniform data to an unexpected UBO" << " | attempted id: " << id << " | current id:" << getCurrentUBO() << "\n";
     }
-};
+}
 
 #else
 class DEBUG {
