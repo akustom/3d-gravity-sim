@@ -75,6 +75,8 @@ namespace gfx {
         return vertices;
     }
 
+    // TODO: create indices generator for sphere
+
     inline void makeSphere(Mesh& mesh, const float radius, const int sides) {
         mesh.vertices = getSphereVertices(radius, sides);
     }
