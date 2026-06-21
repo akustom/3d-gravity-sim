@@ -1,17 +1,16 @@
 #pragma once
 
-#include <iostream>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "glw/buffer.hpp"
 
 
-const float YAW         = -90.0f;
-const float PITCH       =  0.0f;
-const float SPEED       =  5.0f;
-const float SENSITIVITY =  0.1f;
-const float FOV         =  45.0f;
+constexpr float YAW         = -90.0f;
+constexpr float PITCH       =  0.0f;
+constexpr float SPEED       =  5.0f;
+constexpr float SENSITIVITY =  0.1f;
+constexpr float FOV         =  45.0f;
 
 
 namespace gfx {
@@ -30,9 +29,15 @@ namespace gfx {
         float mouseSensitivity  = SENSITIVITY;
         float fieldOfView       = FOV;
 
+        GLFWwindow* m_window = nullptr;
+
+        float lastX, lastY;
+        bool firstMouse = true;
+
         bool isViewDirty = true;
 
         void use(GLFWwindow *window, const glw::UBO& camera_ubo) {
+            this->m_window = window;
             glfwSetWindowUserPointer(window, this);
             camera_ubo.bind(0);
             camera_ubo.allocateBuffer(8);
@@ -40,7 +45,7 @@ namespace gfx {
             pushProjectionMatrix(camera_ubo);
         }
 
-        void processKeyboard(GLFWwindow *window, const float& dt) {
+        void processKeyboard(GLFWwindow *window, const float dt) {
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
                 position += front * movementSpeed * dt;
                 isViewDirty = true;
@@ -101,7 +106,12 @@ namespace gfx {
         }
 
         void pushProjectionMatrix(const glw::UBO& ubo) const {
-            ubo.pushUniform(4, glm::perspective(glm::radians(fieldOfView), 960.0f/540.0f, 0.1f, 100.0f));
+            int width, height;
+            glfwGetFramebufferSize(m_window, &width, &height);
+            ubo.pushUniform(
+                4, glm::perspective(glm::radians(fieldOfView),
+                static_cast<float>(width)/static_cast<float>(height),
+                0.1f, 100.0f));
         }
 
     private:

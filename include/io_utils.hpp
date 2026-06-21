@@ -19,36 +19,35 @@ namespace io {
         return buffer.str();
     }
 
-    inline float lastX = 480.0f;
-    inline float lastY = 270.0f;
-    inline bool firstMouse = true;
-
-    inline void mouse_callback(GLFWwindow* window, const double xpos, const double ypos) {
+    inline void mouse_callback(GLFWwindow* window, const double x_pos, const double y_pos) {
         if (glfwGetInputMode(window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED)
             return;
 
-        if (firstMouse) {
-            lastX = static_cast<float>(xpos);
-            lastY = static_cast<float>(ypos);
-            firstMouse = false;
+        auto* camera = static_cast<gfx::Camera*>(glfwGetWindowUserPointer(window));
+        if (!camera) return;
+
+        if (camera->firstMouse) {
+            camera->lastX = static_cast<float>(x_pos);
+            camera->lastY = static_cast<float>(y_pos);
+            camera->firstMouse = false;
         }
 
-        const auto xoffset = static_cast<float>(xpos - lastX);
-        const auto yoffset = static_cast<float>(lastY - ypos);
+        const auto x_offset = static_cast<float>(x_pos - camera->lastX);
+        const auto y_offset = static_cast<float>(camera->lastY - y_pos);
 
-        lastX = static_cast<float>(xpos);
-        lastY = static_cast<float>(ypos);
+        camera->lastX = static_cast<float>(x_pos);
+        camera->lastY = static_cast<float>(y_pos);
 
-        if (auto* camera = static_cast<gfx::Camera*>(glfwGetWindowUserPointer(window))) {
-            camera->processMouse(xoffset, yoffset);
-        }
+        camera->processMouse(x_offset, y_offset);
     }
 
     inline void mouse_button_callback(GLFWwindow* window, const int button, const int action, const int mods) {
         if (button == GLFW_MOUSE_BUTTON_RIGHT) {
             if (action == GLFW_PRESS) {
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                firstMouse = true;
+                if (auto* camera = static_cast<gfx::Camera*>(glfwGetWindowUserPointer(window))) {
+                    camera->firstMouse = true;
+                }
             }
             else if (action == GLFW_RELEASE) {
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
