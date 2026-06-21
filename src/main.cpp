@@ -3,35 +3,15 @@
 #include <vector>
 // opengl
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
+
 // glm
 #include <glm/gtc/type_ptr.hpp>
 // just my libs
-#include <glw/glw.hpp>
-#include <gfx/gfx.hpp>
-#include <physics/phy.hpp>
+#include "glw/glw.hpp"
+#include "gfx/gfx.hpp"
+#include "physics/phy.hpp"
+#include "io_utils.hpp"
 
-gfx::Camera* currentCameraPtr = nullptr;
-
-float lastX = 480.0f; // Set to window width / 2
-float lastY = 270.0f; // Set to window height / 2
-bool firstMouse = true;
-
-void mouse_callback(GLFWwindow* window, const double xpos, const double ypos) {
-    if (firstMouse) {
-        lastX = static_cast<float>(xpos);
-        lastY = static_cast<float>(ypos);
-        firstMouse = false;
-    }
-
-    auto xoffset = static_cast<float>(xpos - lastX);
-    auto yoffset = static_cast<float>(lastY - ypos);
-
-    lastX = static_cast<float>(xpos);
-    lastY = static_cast<float>(ypos);
-
-    currentCameraPtr->processMouse(xoffset, yoffset);
-}
 
 int main() {
     glfwInit();
@@ -48,8 +28,9 @@ int main() {
     }
     glfwMakeContextCurrent(window);
 
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwSetCursorPosCallback(window, io::mouse_callback);
+    glfwSetMouseButtonCallback(window, io::mouse_button_callback);
 
     gladLoadGL();
 
@@ -90,23 +71,21 @@ int main() {
     vertexVAO.setAttributeDivisor(2, 1);
 
     gfx::Camera camera;
-    currentCameraPtr = &camera;
     glw::UBO cameraUBO;
-    cameraUBO.bind(0);
-    cameraUBO.allocateBuffer(8);
-    camera.pushViewMatrix(cameraUBO);
-    camera.pushProjectionMatrix(cameraUBO);
+    camera.use(window, cameraUBO);
 
     float lastFrame = 0.0f;
     float deltaTime = 0.0f;
 
+    glEnable(GL_DEPTH_TEST);
+
     while (!glfwWindowShouldClose(window)) {
+        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         auto currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
-        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
 
         gfx::drawInstances(particles.positions, square);
         camera.processKeyboard(window, deltaTime);
