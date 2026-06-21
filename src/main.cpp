@@ -5,13 +5,33 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 // glm
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-// just my utilities
+// just my libs
 #include <glw/glw.hpp>
 #include <gfx/gfx.hpp>
+#include <physics/phy.hpp>
 
+gfx::Camera* currentCameraPtr = nullptr;
+
+float lastX = 480.0f; // Set to window width / 2
+float lastY = 270.0f; // Set to window height / 2
+bool firstMouse = true;
+
+void mouse_callback(GLFWwindow* window, const double xpos, const double ypos) {
+    if (firstMouse) {
+        lastX = static_cast<float>(xpos);
+        lastY = static_cast<float>(ypos);
+        firstMouse = false;
+    }
+
+    auto xoffset = static_cast<float>(xpos - lastX);
+    auto yoffset = static_cast<float>(lastY - ypos);
+
+    lastX = static_cast<float>(xpos);
+    lastY = static_cast<float>(ypos);
+
+    currentCameraPtr->processMouse(xoffset, yoffset);
+}
 
 int main() {
     glfwInit();
@@ -28,6 +48,9 @@ int main() {
     }
     glfwMakeContextCurrent(window);
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, mouse_callback);
+
     gladLoadGL();
 
     glViewport(0, 0, 960, 540);
@@ -40,8 +63,7 @@ int main() {
     shaderProgram.use();
 
     gfx::Mesh square;
-    gfx::makeSquare(square);
-    gfx::makePolygon(1.0f, 64, square);
+    gfx::makePolygon(square, 1.0f, 64);
 
     glw::VAO vertexVAO;
     vertexVAO.bind();
@@ -57,28 +79,37 @@ int main() {
     vertexVAO.linkAttribute(0, 3, GL_FLOAT, 6, 0); // links mesh vertices
     vertexVAO.linkAttribute(1, 3, GL_FLOAT, 6, 3); // links mesh colors
 
-    gfx::Instances particles;
+    phy::Particles particles;
+    particles.createParticle(0, {0, 0, 0});
 
     glw::VBO instanceVBO;
     instanceVBO.bind();
-    instanceVBO.bufferData(particles.instancePos, GL_STATIC_DRAW);
+    instanceVBO.bufferData(particles.positions, GL_STATIC_DRAW);
 
-    vertexVAO.linkAttribute(2, 4, GL_DOUBLE, 4, 0);
+    vertexVAO.linkAttribute(2, 4, GL_DOUBLE, 4, 0); // links instances positions
     vertexVAO.setAttributeDivisor(2, 1);
 
     gfx::Camera camera;
+    currentCameraPtr = &camera;
     glw::UBO cameraUBO;
     cameraUBO.bind(0);
     cameraUBO.allocateBuffer(8);
     camera.pushViewMatrix(cameraUBO);
     camera.pushProjectionMatrix(cameraUBO);
 
+    float lastFrame = 0.0f;
+    float deltaTime = 0.0f;
+
     while (!glfwWindowShouldClose(window)) {
-        glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
+        auto currentFrame = static_cast<float>(glfwGetTime());
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(3 * square.indices.size()), GL_UNSIGNED_INT, nullptr, static_cast<GLsizei>(particles.instancePos.size()));
-        camera.position = glm::angleAxis(glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * camera.position;
+        gfx::drawInstances(particles.positions, square);
+        camera.processKeyboard(window, deltaTime);
         camera.pushViewMatrix(cameraUBO);
 
         glfwSwapBuffers(window);
