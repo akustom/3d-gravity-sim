@@ -13,22 +13,9 @@ namespace gfx {
         void loadModel() {}
     };
 
-    /**turns your mesh into a square*/
-    inline void makeSquare(Mesh& mesh) {
-        mesh.vertices = {
-            {{-0.25f, 0.25f, 0.0f},     {1.0f, 0.0f, 0.0f}},
-            {{-0.25f, -0.25f, 0.0f},    {0.0f, 1.0f, 0.0f}},
-            {{0.25f, -0.25f, 0.0f},     {0.0f, 0.0f, 1.0f}},
-            {{0.25f, 0.25f, 0.0f},      {1.0f, 0.0f, 0.0f}},
-        };
-        mesh.indices = {
-            {0, 1, 2},
-            {0, 3, 2}
-        };
-    }
-
-    inline void makePolygon(const float& size, const int& sides, Mesh& mesh) {
-        if (sides < 3) return; // A polygon needs at least 3 sides
+    /**turns your Mesh into a polygon of n-sides*/
+    inline void makePolygon(Mesh& mesh, const float& size, const int& sides) {
+        if (sides < 3) return;
         std::vector<vertex> vertices;
         std::vector<glm::uvec3> indices;
 
