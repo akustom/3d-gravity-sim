@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <GLFW/glfw3.h>
 #include "gfx/camera.hpp"
 
 namespace io {

@@ -1,8 +1,10 @@
 #pragma once
 
+#include <iostream>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glw/glw.hpp>
+#include "glw/buffer.hpp"
 
 
 const float YAW         = -90.0f;
@@ -30,6 +32,14 @@ namespace gfx {
 
         bool isViewDirty = true;
 
+        void use(GLFWwindow *window, const glw::UBO& camera_ubo) {
+            glfwSetWindowUserPointer(window, this);
+            camera_ubo.bind(0);
+            camera_ubo.allocateBuffer(8);
+            pushViewMatrix(camera_ubo);
+            pushProjectionMatrix(camera_ubo);
+        }
+
         void processKeyboard(GLFWwindow *window, const float& dt) {
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
                 position += front * movementSpeed * dt;
@@ -47,9 +57,17 @@ namespace gfx {
                 position += right * movementSpeed * dt;
                 isViewDirty = true;
             }
+            if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+                position += worldUp * movementSpeed * dt;
+                isViewDirty = true;
+            }
+            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+                position -= worldUp * movementSpeed * dt;
+                isViewDirty = true;
+            }
         }
 
-        void processMouse(double x_offset, double y_offset, GLboolean constrainPitch = true) {
+        void processMouse(double x_offset, double y_offset, GLboolean constrain_pitch = true) {
             if (x_offset == 0 && y_offset == 0)
                 return;
 
@@ -61,7 +79,7 @@ namespace gfx {
             yaw   += static_cast<float>(x_offset);
             pitch += static_cast<float>(y_offset);
 
-            if (constrainPitch) {
+            if (constrain_pitch) {
                 if (pitch > 89.0f)
                     pitch = 89.0f;
                 if (pitch < -89.0f)
@@ -80,7 +98,6 @@ namespace gfx {
                 return;
             ubo.pushUniform(0, getViewMatrix());
             isViewDirty = false;
-            std::cout << "pushed\n";
         }
 
         void pushProjectionMatrix(const glw::UBO& ubo) const {

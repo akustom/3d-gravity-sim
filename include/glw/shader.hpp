@@ -1,7 +1,8 @@
 #pragma once
 
+#include <string>
 #include <glad/glad.h>
-#include <io_utils.hpp>
+#include "io_utils.hpp"
 
 
 namespace glw {
@@ -33,7 +34,7 @@ namespace glw {
         }
 
         void compile(const std::string& file_path, const GLenum shader_type) {
-            std::string sourceCode = readFile(file_path);
+            std::string sourceCode = io::readFile(file_path);
             const char* c_sourceCode = sourceCode.c_str();
 
             id = glCreateShader(shader_type);

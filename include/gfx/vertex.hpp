@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 
+
 namespace gfx {
     struct vertex {
         glm::vec3 pos;
