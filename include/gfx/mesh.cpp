@@ -49,10 +49,10 @@ namespace gfx {
     std::vector<vertex> getSphereVertices(float radius, int sides) {
         std::vector<vertex> vertices;
 
-        float latitudeIncrement     = glm::radians(360.0f / static_cast<float>(sides));
+        float latitudeIncrement     = glm::radians(180.0f / static_cast<float>(sides));
         float longitudeIncrement    = glm::radians(360.0f / static_cast<float>(sides));
 
-        for (int i = 0; i <= sides / 2; ++i) {
+        for (int i = 0; i <= sides; ++i) {
             float currentLatitudeAngle      = -glm::half_pi<float>() + latitudeIncrement * static_cast<float>(i);
             float currentLongitudeLength    = std::cos(currentLatitudeAngle);
 
@@ -79,13 +79,13 @@ namespace gfx {
             for (int j = 0; j < sides; ++j) {
                 glm::uvec3 tri1Quad = {
                     i * sides + j,
-                    i * sides + j + 1,
+                    i * sides + (j + 1) % sides,
                     (i + 1) * sides + j
                 };
                 glm::uvec3 tri2Quad = {
-                    i * sides + j + 1,
+                    i * sides + (j + 1) % sides,
                     (i + 1) * sides + j,
-                    (i + 1) * sides + j + 1,
+                    (i + 1) * sides + (j + 1) % sides,
                 };
 
                 indices.push_back(tri1Quad);
