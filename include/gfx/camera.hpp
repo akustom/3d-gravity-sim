@@ -1,15 +1,12 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include "glw/buffer.hpp"
 
+struct GLFWwindow;
 
-constexpr float SPEED       =  5.0f;
-constexpr float SENSITIVITY =  0.1f;
-constexpr float FOV         =  45.0f;
-
+namespace glw {
+    struct UBO;
+}
 
 namespace gfx {
     struct Camera {
@@ -23,9 +20,9 @@ namespace gfx {
         float yaw   = glm::degrees(std::atan2(front.z, front.x));
         float pitch = glm::degrees(std::asin(front.y));
 
-        float movementSpeed     = SPEED;
-        float mouseSensitivity  = SENSITIVITY;
-        float fieldOfView       = FOV;
+        float movementSpeed     = 5.0f;
+        float mouseSensitivity  = 0.1f;
+        float fieldOfView       = 45.0f;
 
         GLFWwindow* window = nullptr;
 
@@ -34,91 +31,19 @@ namespace gfx {
 
         bool isViewDirty = true;
 
-        void use(GLFWwindow* window, const glw::UBO& camera_ubo) {
-            this->window = window;
-            glfwSetWindowUserPointer(window, this);
-            pushViewMatrix(camera_ubo);
-            pushProjectionMatrix(camera_ubo);
-        }
+        void use(GLFWwindow* window, const glw::UBO& camera_ubo);
 
-        void processKeyboard(GLFWwindow* window, const float dt) {
-            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-                position += front * movementSpeed * dt;
-                isViewDirty = true;
-            }
-            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-                position -= front * movementSpeed * dt;
-                isViewDirty = true;
-            }
-            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-                position -= right * movementSpeed * dt;
-                isViewDirty = true;
-            }
-            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-                position += right * movementSpeed * dt;
-                isViewDirty = true;
-            }
-            if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-                position += worldUp * movementSpeed * dt;
-                isViewDirty = true;
-            }
-            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-                position -= worldUp * movementSpeed * dt;
-                isViewDirty = true;
-            }
-        }
+        void processKeyboard(GLFWwindow* window, float dt);
 
-        void processMouse(double x_offset, double y_offset, GLboolean constrain_pitch = true) {
-            if (x_offset == 0 && y_offset == 0)
-                return;
+        void processMouse(double x_offset, double y_offset, bool constrain_pitch = true);
 
-            isViewDirty = true;
+        [[nodiscard]] glm::mat4 getViewMatrix() const;
 
-            x_offset *= mouseSensitivity;
-            y_offset *= mouseSensitivity;
+        void pushViewMatrix(const glw::UBO& ubo);
 
-            yaw   += static_cast<float>(x_offset);
-            pitch += static_cast<float>(y_offset);
-
-            if (constrain_pitch) {
-                if (pitch > 89.0f)
-                    pitch = 89.0f;
-                if (pitch < -89.0f)
-                    pitch = -89.0f;
-            }
-
-            updateCameraVectors();
-        }
-
-        [[nodiscard]] glm::mat4 getViewMatrix() const {
-            return glm::lookAt(position, position + front, up);
-        }
-
-        void pushViewMatrix(const glw::UBO& ubo) {
-            if (!isViewDirty)
-                return;
-            ubo.pushUniform(0, getViewMatrix());
-            isViewDirty = false;
-        }
-
-        void pushProjectionMatrix(const glw::UBO& ubo) const {
-            int width, height;
-            glfwGetFramebufferSize(window, &width, &height);
-            ubo.pushUniform(
-                4, glm::perspective(glm::radians(fieldOfView),
-                static_cast<float>(width)/static_cast<float>(height),
-                0.1f, 100.0f));
-        }
+        void pushProjectionMatrix(const glw::UBO& ubo) const;
 
     private:
-        void updateCameraVectors() {
-            glm::vec3 newFront;
-            newFront.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-            newFront.y = sin(glm::radians(pitch));
-            newFront.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-            front = glm::normalize(newFront);
-            right = glm::normalize(glm::cross(newFront, worldUp));
-            up    = glm::normalize(glm::cross(right, newFront));
-        }
+        void updateCameraVectors();
     };
 }
