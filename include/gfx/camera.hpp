@@ -1,6 +1,13 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include <cmath>
+
+#include <glm/vec3.hpp>
+#include <glm/geometric.hpp>
+#include <glm/trigonometric.hpp>
+
+#include <glm/fwd.hpp>
+
 
 struct GLFWwindow;
 
