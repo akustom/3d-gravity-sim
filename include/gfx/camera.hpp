@@ -43,7 +43,7 @@ namespace gfx {
             pushProjectionMatrix(camera_ubo);
         }
 
-        void processKeyboard(GLFWwindow *window, const float dt) {
+        void processKeyboard(GLFWwindow* window, const float dt) {
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
                 position += front * movementSpeed * dt;
                 isViewDirty = true;
