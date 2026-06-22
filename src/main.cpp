@@ -14,6 +14,8 @@
 
 
 int main() {
+    // TODO: make a dedicated window struct in its own namespace and file
+
     glfwInit();
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
