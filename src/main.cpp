@@ -3,7 +3,7 @@
 #include <vector>
 // opengl
 #include <glad/glad.h>
-
+#include <GLFW/glfw3.h>
 // glm
 #include <glm/gtc/type_ptr.hpp>
 // just my libs
@@ -12,6 +12,9 @@
 #include "physics/phy.hpp"
 #include "io_utils.hpp"
 
+void x(auto xx) {
+    std::cout << xx;
+}
 
 int main() {
     // TODO: make a dedicated window struct in its own namespace and file
