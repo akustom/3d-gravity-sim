@@ -13,15 +13,5 @@ constexpr auto getPtr(const T& data) {
     if constexpr (std::is_same_v<T,glm::mat4>)
         return glm::value_ptr(data);
     else
-        std::cerr << "uniform type is currently unsupported\n";
-};
-
-constexpr int getGLTypeSize(const GLenum type) {
-    switch (type) {
-        case GL_FLOAT:  return sizeof(float);
-        case GL_INT:    return sizeof(int);
-        case GL_DOUBLE: return sizeof(double);
-        default:
-            throw std::invalid_argument("unexpected gl type");
-    }
+        throw std::invalid_argument("uniform type is currently unsupported\n");
 }
