@@ -12,9 +12,6 @@
 #include "physics/phy.hpp"
 #include "io_utils.hpp"
 
-void x(auto xx) {
-    std::cout << xx;
-}
 
 int main() {
     // TODO: make a dedicated window struct in its own namespace and file
