@@ -54,9 +54,7 @@ namespace glw {
             glVertexArrayBindingDivisor(id, binding_loc, divisor);
         }
 
-        /**
-         *use offsetof(struct, member) to calculate byte_offset,
-         */
+        /**use offsetof(struct, member) to calculate byte_offset,*/
         template <trivially_copyable T>
         void attachBuffer(const VBO& vbo, const int binding_loc, const int byte_offset, const std::vector<T>&) const {
             glVertexArrayVertexBuffer(id, binding_loc, vbo.id, byte_offset, sizeof(T));
