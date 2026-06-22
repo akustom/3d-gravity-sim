@@ -114,13 +114,13 @@ namespace gfx {
 
     private:
         void updateCameraVectors() {
-            glm::vec3 tempFront;
-            tempFront.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-            tempFront.y = sin(glm::radians(pitch));
-            tempFront.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-            front = glm::normalize(tempFront);
-            right = glm::normalize(glm::cross(tempFront, worldUp));
-            up    = glm::normalize(glm::cross(right, tempFront));
+            glm::vec3 newFront;
+            newFront.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+            newFront.y = sin(glm::radians(pitch));
+            newFront.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+            front = glm::normalize(newFront);
+            right = glm::normalize(glm::cross(newFront, worldUp));
+            up    = glm::normalize(glm::cross(right, newFront));
         }
     };
 }
