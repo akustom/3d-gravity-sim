@@ -64,7 +64,7 @@ namespace gfx {
 
                 vertices.push_back({
                     {currentX, currentY, currentZ},
-                    {1.0f, 0.0f, 0.0f}
+                    {1.0f, 0.0f, 0.5f}
                 });
             }
         }
