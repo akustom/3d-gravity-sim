@@ -12,6 +12,7 @@ add_executable(3grav
         src/glad.c
         include/gfx/camera.cpp
         include/gfx/mesh.cpp
+        include/gfx/instance.cpp
 )
 
 target_include_directories(3grav PRIVATE ${CMAKE_SOURCE_DIR}/include)
