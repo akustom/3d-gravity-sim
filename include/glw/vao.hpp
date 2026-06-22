@@ -1,8 +1,10 @@
 #pragma once
 
+#include <vector>
 #include <glad/glad.h>
 #include "debug.hpp"
 #include "gl_utils.hpp"
+#include "glw/buffer.hpp"
 
 
 namespace glw {
@@ -10,7 +12,7 @@ namespace glw {
         GLuint id = 0;
 
         void gen() {
-            glGenVertexArrays(1, &id);
+            glCreateVertexArrays(1, &id);
         }
 
     public:
@@ -41,19 +43,27 @@ namespace glw {
             glBindVertexArray(id);
         }
 
-        void linkAttribute(const int location, const int size, const GLenum type, const int element_stride, const int element_offset) const {
-            DEBUG::validateVAOLink(id);
-
-            glVertexAttribPointer(
-                location, size, type, GL_FALSE,
-                static_cast<GLsizei>(element_stride * getGLTypeSize(type)),
-                reinterpret_cast<void*>(element_offset * getGLTypeSize(type)));
-            glEnableVertexAttribArray(location);
+        /**use offsetof(struct, member) to calculate byte_offset*/
+        void formatAttribute(const int attrib_loc, const int binding_loc, const int size, const GLenum type, const int byte_offset) const {
+            glEnableVertexArrayAttrib(id, attrib_loc);
+            glVertexArrayAttribFormat(id, attrib_loc, size, type, GL_FALSE, byte_offset);
+            glVertexArrayAttribBinding(id, attrib_loc, binding_loc);
         }
 
-        void setAttributeDivisor(const int location, const int divisor) const {
-            DEBUG::validateVAODivisor(id);
-            glVertexAttribDivisor(location, divisor);
+        void setAttributeDivisor(const int binding_loc, const int divisor) const {
+            glVertexArrayBindingDivisor(id, binding_loc, divisor);
+        }
+
+        /**
+         *use offsetof(struct, member) to calculate byte_offset,
+         *use sizeof(struct) to calculate byte_stride
+         */
+        template <trivially_copyable T>
+        void attachBuffer(const VBO& vbo, const int binding_loc, const int byte_offset, const std::vector<T>&) const {
+            glVertexArrayVertexBuffer(id, binding_loc, vbo.id, byte_offset, sizeof(T));
+        }
+        void attachBuffer(const EBO& ebo) const {
+            glVertexArrayElementBuffer(id, ebo.id);
         }
     };
 }

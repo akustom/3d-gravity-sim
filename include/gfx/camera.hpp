@@ -39,8 +39,6 @@ namespace gfx {
         void use(GLFWwindow *window, const glw::UBO& camera_ubo) {
             this->window = window;
             glfwSetWindowUserPointer(window, this);
-            camera_ubo.bind(0);
-            camera_ubo.allocateBuffer(8);
             pushViewMatrix(camera_ubo);
             pushProjectionMatrix(camera_ubo);
         }

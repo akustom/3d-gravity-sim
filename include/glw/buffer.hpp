@@ -8,16 +8,14 @@
 
 namespace glw {
     struct Buffer {
-    protected:
         GLuint id = 0;
 
-        void gen() {
-            glGenBuffers(1, &id);
+        void create() {
+            glCreateBuffers(1, &id);
         }
 
-    public:
         Buffer() {
-            gen();
+            create();
         }
 
         ~Buffer() {
@@ -40,56 +38,39 @@ namespace glw {
             return *this;
         }
 
-        void bind(GLenum buffer_type) const {
-            glBindBuffer(buffer_type, id);
+        template <trivially_copyable T>
+        void allocateBuffer(const std::vector<T>& init_data, const GLenum flag = 0) const {
+            glNamedBufferStorage(id, init_data.size() * sizeof(T), init_data.data(), flag);
         }
 
         template <trivially_copyable T>
-        static void bufferData(GLenum buffer_type, const std::vector<T>& data, GLenum usage) {
-            glBufferData(buffer_type, static_cast<GLsizeiptr>(data.size() * sizeof(T)), data.data(), usage);
+        void pushData(const int byte_offset, const std::vector<T>& data) const {
+            glNamedBufferSubData(id, byte_offset, data.size() * sizeof(T), data.data());
+        }
+        template <trivially_copyable T>
+        void pushData(const int byte_offset, const T& data) const {
+            glNamedBufferSubData(id, byte_offset, sizeof(T), getPtr(data));
         }
     };
 
-    struct VBO : Buffer {
-        void bind() const {
-            Buffer::bind(GL_ARRAY_BUFFER);
-        }
-        void bufferData(const auto& data, GLenum usage) {
-            DEBUG::validateVBOBuffer(id);
-            Buffer::bufferData(GL_ARRAY_BUFFER, data, usage);
-        }
-    };
+    struct VBO : Buffer {};
 
-    struct EBO : Buffer {
-        void bind() const {
-            Buffer::bind(GL_ELEMENT_ARRAY_BUFFER);
-        }
-        void bufferData(const auto& data, GLenum usage) {
-            DEBUG::validateEBOBuffer(id);
-            Buffer::bufferData(GL_ELEMENT_ARRAY_BUFFER, data, usage);
-        }
-    };
+    struct EBO : Buffer {};
 
     struct UBO : Buffer {
-        explicit UBO() {
-            gen();
-        }
-
         void bind(const GLint binding_point) const {
             glBindBufferBase(GL_UNIFORM_BUFFER, binding_point, id);
         }
 
         /**pass vec4 counts (16 byte chunks) into vec4_offset*/
         void allocateBuffer(const GLintptr vec4_count) const {
-            DEBUG::validateUBOAllocate(id);
-            glBufferData(GL_UNIFORM_BUFFER, vec4_count * 16, nullptr, GL_DYNAMIC_DRAW);
+            glNamedBufferStorage(id, vec4_count * 16, nullptr, GL_DYNAMIC_STORAGE_BIT);
         }
 
         /**pass vec4 counts (16 byte chunks) into vec4_offset*/
         template <trivially_copyable D>
         void pushUniform(const GLintptr vec4_offset, const D& data) const {
-            DEBUG::validateUBOPush(id);
-            glBufferSubData(GL_UNIFORM_BUFFER, vec4_offset * 16, sizeof(D), getPtr(data));
+            this->pushData(vec4_offset * 16, data);
         }
     };
 }

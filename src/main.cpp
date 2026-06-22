@@ -50,32 +50,35 @@ int main() {
     gfx::makePolygon(square, 1.0f, 64);
 
     glw::VAO vertexVAO;
-    vertexVAO.bind();
+
+    vertexVAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
+    vertexVAO.formatAttribute(1, 0, 3, GL_FLOAT, offsetof(gfx::vertex, color));
+
+    vertexVAO.formatAttribute(2, 1, 4, GL_FLOAT, 0);
+    vertexVAO.setAttributeDivisor(1, 1);
 
     glw::VBO squareVBO;
-    squareVBO.bind();
-    squareVBO.bufferData(square.vertices, GL_STATIC_DRAW);
+    squareVBO.allocateBuffer(square.vertices);
+    vertexVAO.attachBuffer(squareVBO, 0, 0, square.vertices);
 
     glw::EBO squareEBO;
-    squareEBO.bind();
-    squareEBO.bufferData(square.indices, GL_STATIC_DRAW);
-
-    vertexVAO.linkAttribute(0, 3, GL_FLOAT, 6, 0); // links mesh vertices
-    vertexVAO.linkAttribute(1, 3, GL_FLOAT, 6, 3); // links mesh colors
+    squareEBO.allocateBuffer(square.indices);
+    vertexVAO.attachBuffer(squareEBO);
 
     phy::Particles particles;
     particles.createParticle(0, {0, 0, 0});
 
     glw::VBO instanceVBO;
-    instanceVBO.bind();
-    instanceVBO.bufferData(particles.positions, GL_STATIC_DRAW);
-
-    vertexVAO.linkAttribute(2, 4, GL_DOUBLE, 4, 0); // links instances positions
-    vertexVAO.setAttributeDivisor(2, 1);
+    instanceVBO.allocateBuffer(particles.positions);
+    vertexVAO.attachBuffer(instanceVBO, 1, 0, particles.positions);
 
     gfx::Camera camera;
     glw::UBO cameraUBO;
+    cameraUBO.bind(0);
+    cameraUBO.allocateBuffer(8);
     camera.use(window, cameraUBO);
+
+    vertexVAO.bind();
 
     float lastFrame = 0.0f;
     float deltaTime = 0.0f;
@@ -83,7 +86,7 @@ int main() {
     glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window)) {
-        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+        glClearColor(0.07f, 0.07f, 0.07f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         auto currentFrame = static_cast<float>(glfwGetTime());
