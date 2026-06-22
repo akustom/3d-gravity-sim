@@ -36,7 +36,7 @@ namespace gfx {
 
         bool isViewDirty = true;
 
-        void use(GLFWwindow *window, const glw::UBO& camera_ubo) {
+        void use(GLFWwindow* window, const glw::UBO& camera_ubo) {
             this->window = window;
             glfwSetWindowUserPointer(window, this);
             pushViewMatrix(camera_ubo);
