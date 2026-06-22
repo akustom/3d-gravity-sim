@@ -1,9 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <glad/glad.h>
 #include "mesh.hpp"
-
 
 namespace gfx {
     void drawInstances(const auto& data, const Mesh& mesh) {
