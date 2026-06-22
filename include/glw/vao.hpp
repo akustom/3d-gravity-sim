@@ -56,7 +56,6 @@ namespace glw {
 
         /**
          *use offsetof(struct, member) to calculate byte_offset,
-         *use sizeof(struct) to calculate byte_stride
          */
         template <trivially_copyable T>
         void attachBuffer(const VBO& vbo, const int binding_loc, const int byte_offset, const std::vector<T>&) const {
