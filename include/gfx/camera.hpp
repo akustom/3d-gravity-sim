@@ -22,8 +22,8 @@ namespace gfx {
         glm::vec3 right   = glm::normalize(glm::cross(front, worldUp));
         glm::vec3 up      = glm::normalize(glm::cross(right, front));
 
-        float yaw   = YAW;
-        float pitch = PITCH;
+        float yaw   = glm::degrees(std::atan2(front.z, front.x));
+        float pitch = glm::degrees(std::asin(front.y));
 
         float movementSpeed     = SPEED;
         float mouseSensitivity  = SENSITIVITY;
