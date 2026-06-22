@@ -97,7 +97,7 @@ int main() {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        gfx::drawInstances(particles.positions, square);
+        gfx::drawInstances(static_cast<int>(particles.positions.size()), square);
         camera.processKeyboard(window, deltaTime);
         camera.pushViewMatrix(cameraUBO);
 
