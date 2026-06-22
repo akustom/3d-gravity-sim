@@ -33,7 +33,7 @@ namespace gfx {
 
         GLFWwindow* window = nullptr;
 
-        float lastX, lastY = 0.0f;
+        float lastX = 0.0f, lastY = 0.0f;
         bool firstMouse = true;
 
         bool isViewDirty = true;
