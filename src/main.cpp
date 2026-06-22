@@ -47,14 +47,14 @@ int main() {
     shaderProgram.use();
 
     gfx::Mesh square;
-    gfx::makePolygon(square, 1.0f, 64);
+    gfx::makeSphere(square, 1.0f, 32);
 
     glw::VAO vertexVAO;
 
     vertexVAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
     vertexVAO.formatAttribute(1, 0, 3, GL_FLOAT, offsetof(gfx::vertex, color));
 
-    vertexVAO.formatAttribute(2, 1, 4, GL_FLOAT, 0);
+    vertexVAO.formatAttribute(2, 1, 4, GL_DOUBLE, 0);
     vertexVAO.setAttributeDivisor(1, 1);
 
     glw::VBO squareVBO;
