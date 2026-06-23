@@ -9,9 +9,11 @@
 // just my libs
 #include "glw/glw.hpp"
 #include "gfx/gfx.hpp"
-#include "physics/phy.hpp"
+#include "win/win.hpp"
 #include "io_utils.hpp"
-#include "win/window.hpp"
+#include "physics/phy.hpp"
+
+
 
 
 int main() {
