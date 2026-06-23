@@ -10,10 +10,9 @@
 #include "glw/glw.hpp"
 #include "gfx/gfx.hpp"
 #include "win/win.hpp"
-#include "io_utils.hpp"
 #include "physics/phy.hpp"
-
-
+#include "io_utils.hpp"
+#include "fps.hpp"
 
 
 int main() {
@@ -47,7 +46,7 @@ int main() {
     shaderProgram.use();
 
     gfx::Mesh square;
-    gfx::makeSphere(square, 1.0f, 32);
+    gfx::makeSphere(square, 1.0f, 4);
 
     glw::VAO vertexVAO;
     vertexVAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
@@ -79,8 +78,7 @@ int main() {
 
     vertexVAO.bind();
 
-    float lastFrame = 0.0f;
-    float deltaTime = 0.0f;
+    FrameTimer frameTimer;
 
     glEnable(GL_DEPTH_TEST);
 
@@ -88,12 +86,10 @@ int main() {
         glClearColor(0.07f, 0.07f, 0.07f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        auto currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        float dt = frameTimer.getFrameTime();
 
         gfx::drawInstances(static_cast<int>(particles.positions.size()), square);
-        camera.processKeyboard(window, deltaTime);
+        camera.processKeyboard(window, dt);
         camera.pushViewMatrix(cameraUBO);
 
         glfwSwapBuffers(window.glfw_window);
