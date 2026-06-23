@@ -19,7 +19,6 @@ namespace io {
         return buffer.str();
     }
 
-    // TODO: when you have create a window struct, cut this into a window util file adjacent to where the window struct file is
 
     inline void mouse_callback(GLFWwindow* window, const double x_pos, const double y_pos) {
         if (glfwGetInputMode(window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED)
