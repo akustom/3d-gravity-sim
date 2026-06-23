@@ -11,37 +11,39 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "glw/buffer.hpp"
+#include "window.hpp"
+
 
 namespace gfx {
-    void Camera::use(GLFWwindow* window, const glw::UBO& camera_ubo) {
+    void Camera::use(const win::Window& window, const glw::UBO& camera_ubo) {
         this->window = window;
-        glfwSetWindowUserPointer(window, this);
+        window.setUserPointer(this);
         pushViewMatrix(camera_ubo);
         pushProjectionMatrix(camera_ubo);
     }
 
-    void Camera::processKeyboard(GLFWwindow* window, float dt) {
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    void Camera::processKeyboard(const win::Window& window, float dt) {
+        if (window.isKeyPressed(GLFW_KEY_W)) {
             position += front * movementSpeed * dt;
             isViewDirty = true;
         }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        if (window.isKeyPressed(GLFW_KEY_S)) {
             position -= front * movementSpeed * dt;
             isViewDirty = true;
         }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        if (window.isKeyPressed(GLFW_KEY_A)) {
             position -= right * movementSpeed * dt;
             isViewDirty = true;
         }
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        if (window.isKeyPressed(GLFW_KEY_D)) {
             position += right * movementSpeed * dt;
             isViewDirty = true;
         }
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        if (window.isKeyPressed(GLFW_KEY_SPACE)) {
             position += worldUp * movementSpeed * dt;
             isViewDirty = true;
         }
-        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+        if (window.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
             position -= worldUp * movementSpeed * dt;
             isViewDirty = true;
         }
@@ -82,7 +84,7 @@ namespace gfx {
 
     void Camera::pushProjectionMatrix(const glw::UBO& ubo) const {
         int width, height;
-        glfwGetFramebufferSize(window, &width, &height);
+        window.getWindowSize(&width, &height);
         ubo.pushUniform(
         4, glm::perspective(glm::radians(fieldOfView),
         static_cast<float>(width)/static_cast<float>(height),

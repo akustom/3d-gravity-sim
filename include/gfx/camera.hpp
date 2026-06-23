@@ -8,8 +8,8 @@
 
 #include <glm/fwd.hpp>
 
+#include "window.hpp"
 
-struct GLFWwindow;
 
 namespace glw {
     struct UBO;
@@ -31,16 +31,16 @@ namespace gfx {
         float mouseSensitivity  = 0.1f;
         float fieldOfView       = 45.0f;
 
-        GLFWwindow* window = nullptr;
+        win::Window window;
 
         float lastX = 0.0f, lastY = 0.0f;
         bool firstMouse = true;
 
         bool isViewDirty = true;
 
-        void use(GLFWwindow* window, const glw::UBO& camera_ubo);
+        void use(const win::Window& window, const glw::UBO& camera_ubo);
 
-        void processKeyboard(GLFWwindow* window, float dt);
+        void processKeyboard(const win::Window& window, float dt);
 
         void processMouse(double x_offset, double y_offset, bool constrain_pitch = true);
 
