@@ -32,7 +32,7 @@ namespace glw {
             if (this != &other) {
                 glDeleteBuffers(1, &id);
 
-                id = other.id;
+                this->id = other.id;
                 other.id = 0;
             }
             return *this;
