@@ -18,9 +18,9 @@ namespace gfx {
     /**turns your Mesh into a regular polygon of n-sides*/
     void makePolygon(Mesh& mesh, float radius, int sides);
 
-    std::vector<vertex> getSphereVertices(float radius, int sides);
+    std::vector<vertex> getPolyhedraVertices(float radius, int sides);
 
-    std::vector<glm::uvec3> getSphereIndices(int sides);
+    std::vector<glm::uvec3> getPolyhedraIndices(int sides);
 
-    void makeSphere(Mesh& mesh, float radius, int sides);
+    void makePolyhedra(Mesh& mesh, float radius, int sides);
 }

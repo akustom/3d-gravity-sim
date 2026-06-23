@@ -46,13 +46,13 @@ namespace gfx {
         mesh.indices    = indices;
     }
 
-    std::vector<vertex> getSphereVertices(float radius, int sides) {
+    std::vector<vertex> getPolyhedraVertices(float radius, int sides) {
         std::vector<vertex> vertices;
 
-        float latitudeIncrement     = glm::radians(180.0f / static_cast<float>(sides));
+        float latitudeIncrement     = glm::radians(360.0f / static_cast<float>(sides % 2 == 0 ? sides : sides + 1));
         float longitudeIncrement    = glm::radians(360.0f / static_cast<float>(sides));
 
-        for (int i = 0; i <= sides; ++i) {
+        for (int i = 0; i < (sides % 2 == 0 ? sides + 2 : sides + 3) / 2; ++i) {
             float currentLatitudeAngle      = -glm::half_pi<float>() + latitudeIncrement * static_cast<float>(i);
             float currentLongitudeLength    = std::cos(currentLatitudeAngle);
 
@@ -72,10 +72,10 @@ namespace gfx {
         return vertices;
     }
 
-    std::vector<glm::uvec3> getSphereIndices(int sides) {
+    std::vector<glm::uvec3> getPolyhedraIndices(int sides) {
         std::vector<glm::uvec3> indices;
 
-        for (int i = 0; i < sides; ++i) {
+        for (int i = 0; i < (sides % 2 == 0 ? sides : sides + 1) / 2; ++i) {
             for (int j = 0; j < sides; ++j) {
                 glm::uvec3 tri1Quad = {
                     i * sides + j,
@@ -95,8 +95,11 @@ namespace gfx {
         return indices;
     }
 
-    void makeSphere(Mesh& mesh, float radius, int sides) {
-        mesh.vertices = getSphereVertices(radius, sides);
-        mesh.indices = getSphereIndices(sides);
+    void makePolyhedra(Mesh& mesh, float radius, int sides) {
+        if (sides < 3)
+            return;
+
+        mesh.vertices = getPolyhedraVertices(radius, sides);
+        mesh.indices = getPolyhedraIndices(sides);
     }
 }
