@@ -11,7 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "glw/buffer.hpp"
-#include "window.hpp"
+#include "win/window.hpp"
 
 
 namespace gfx {

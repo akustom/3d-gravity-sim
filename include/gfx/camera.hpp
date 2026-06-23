@@ -8,7 +8,7 @@
 
 #include <glm/fwd.hpp>
 
-#include "window.hpp"
+#include "win/window.hpp"
 
 
 namespace glw {
