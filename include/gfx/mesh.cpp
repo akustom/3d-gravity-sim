@@ -99,7 +99,7 @@ namespace gfx {
         if (sides < 3)
             return;
 
-        mesh.vertices = getPolyhedraVertices(radius, sides);
-        mesh.indices = getPolyhedraIndices(sides);
+        mesh.vertices = getPolyhedronVertices(radius, sides);
+        mesh.indices = getPolyhedronIndices(sides);
     }
 }
