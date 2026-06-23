@@ -46,7 +46,7 @@ int main() {
     shaderProgram.use();
 
     gfx::Mesh square;
-    gfx::makeSphere(square, 1.0f, 4);
+    gfx::makePolyhedra(square, 1.0f, 7);
 
     glw::VAO vertexVAO;
     vertexVAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
