@@ -11,7 +11,7 @@
 #include "gfx/gfx.hpp"
 #include "physics/phy.hpp"
 #include "io_utils.hpp"
-#include "window.hpp"
+#include "win/window.hpp"
 
 
 int main() {
