@@ -55,9 +55,8 @@ namespace glw {
         }
 
         /**use offsetof(struct, member) to calculate byte_offset,*/
-        template <trivially_copyable T>
-        void attachBuffer(const VBO& vbo, const int binding_loc, const int byte_offset, const std::vector<T>&) const {
-            glVertexArrayVertexBuffer(id, binding_loc, vbo.id, byte_offset, sizeof(T));
+        void attachBuffer(const VBO& vbo, const int binding_loc, const int byte_offset, const int byte_stride) const {
+            glVertexArrayVertexBuffer(id, binding_loc, vbo.id, byte_offset, byte_stride);
         }
         void attachBuffer(const EBO& ebo) const {
             glVertexArrayElementBuffer(id, ebo.id);

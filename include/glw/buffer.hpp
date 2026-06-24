@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include "debug.hpp"
 #include "gl_utils.hpp"
+#include "util.hpp"
 
 
 namespace glw {
@@ -39,17 +40,17 @@ namespace glw {
         }
 
         template <trivially_copyable T>
-        void allocateBuffer(const std::vector<T>& init_data, const GLenum flag = 0) const {
-            glNamedBufferStorage(id, init_data.size() * sizeof(T), init_data.data(), flag);
+        void allocateBuffer(std::vector<T>& init_data, const GLenum flag = 0) const {
+            glNamedBufferStorage(id, bytesof(init_data), init_data.data(), flag);
         }
 
         template <trivially_copyable T>
-        void pushData(const int byte_offset, const std::vector<T>& data) const {
-            glNamedBufferSubData(id, byte_offset, data.size() * sizeof(T), data.data());
+        void pushData(const int byte_offset, std::vector<T>& data) const {
+            glNamedBufferSubData(id, byte_offset, bytesof(data), data.data());
         }
         template <trivially_copyable T>
-        void pushData(const int byte_offset, const T& data) const {
-            glNamedBufferSubData(id, byte_offset, sizeof(T), getPtr(data));
+        void pushData(const int byte_offset, T& data) const {
+            glNamedBufferSubData(id, byte_offset, bytesof<T>(), getPtr(data));
         }
     };
 
@@ -63,14 +64,14 @@ namespace glw {
         }
 
         /**pass vec4 counts (16 byte chunks) into vec4_offset*/
-        void allocateBuffer(const GLintptr vec4_count) const {
-            glNamedBufferStorage(id, vec4_count * 16, nullptr, GL_DYNAMIC_STORAGE_BIT);
+        void allocateBuffer(const GLuint byte_offset) const {
+            glNamedBufferStorage(id, static_cast<GLintptr>(byte_offset), nullptr, GL_DYNAMIC_STORAGE_BIT);
         }
 
         /**pass vec4 counts (16 byte chunks) into vec4_offset*/
         template <trivially_copyable D>
-        void pushUniform(const GLintptr vec4_offset, const D& data) const {
-            this->pushData(vec4_offset * 16, data);
+        void pushUniform(const GLuint byte_offset, const D& data) const {
+            this->pushData(static_cast<GLintptr>(byte_offset), data);
         }
     };
 }
