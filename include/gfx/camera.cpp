@@ -13,6 +13,8 @@
 #include "glw/buffer.hpp"
 #include "win/window.hpp"
 
+#include "util.hpp"
+
 
 namespace gfx {
     void Camera::use(const win::Window& window, const glw::UBO& camera_ubo) {
@@ -86,7 +88,8 @@ namespace gfx {
         int width, height;
         window.getWindowSize(&width, &height);
         ubo.pushUniform(
-        4, glm::perspective(glm::radians(fieldOfView),
+        bytesof<glm::mat4>(),
+        glm::perspective(glm::radians(fieldOfView),
         static_cast<float>(width)/static_cast<float>(height),
         0.1f, 100.0f));
     }

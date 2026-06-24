@@ -12,12 +12,11 @@
 #include "win/win.hpp"
 #include "physics/phy.hpp"
 #include "io_utils.hpp"
+#include "util.hpp"
 #include "fps.hpp"
 
 
 int main() {
-    // TODO: make a dedicated window struct in its own namespace and file
-
     glfwInit();
 
     win::Window window{
@@ -46,7 +45,7 @@ int main() {
     shaderProgram.use();
 
     gfx::Mesh square;
-    gfx::makePolyhedron(square, 1.0f, 4);
+    gfx::makePolyhedron(square, 1.0f, 8);
 
     glw::VAO vertexVAO;
     vertexVAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
@@ -57,7 +56,7 @@ int main() {
 
     glw::VBO squareVBO;
     squareVBO.allocateBuffer(square.vertices);
-    vertexVAO.attachBuffer(squareVBO, 0, 0, square.vertices);
+    vertexVAO.attachBuffer(squareVBO, 0, 0, bytesof<gfx::vertex>());
 
     glw::EBO squareEBO;
     squareEBO.allocateBuffer(square.indices);
@@ -68,12 +67,12 @@ int main() {
 
     glw::VBO instanceVBO;
     instanceVBO.allocateBuffer(particles.positions);
-    vertexVAO.attachBuffer(instanceVBO, 1, 0, particles.positions);
+    vertexVAO.attachBuffer(instanceVBO, 1, 0, bytesof<glm::dvec4>());
 
     gfx::Camera camera;
     glw::UBO cameraUBO;
     cameraUBO.bind(0);
-    cameraUBO.allocateBuffer(8);
+    cameraUBO.allocateBuffer(2 * bytesof<glm::mat4>());
     camera.use(window, cameraUBO);
 
     vertexVAO.bind();
