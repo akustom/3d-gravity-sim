@@ -96,7 +96,7 @@ namespace gfx {
     }
 
     void makePolyhedron(Mesh& mesh, float radius, int sides) {
-        if (sides < 3)
+        if (sides <= 3)
             return;
 
         mesh.vertices = getPolyhedronVertices(radius, sides);
