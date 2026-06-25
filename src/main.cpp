@@ -21,7 +21,7 @@ int main() {
 
     win::Window window{
         4, 6,
-        960, 540, "Hello World"
+        960, 540, "gravity sim babyyyy"
     };
     window.use();
 
