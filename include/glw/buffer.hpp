@@ -64,14 +64,14 @@ namespace glw {
         }
 
         /**pass vec4 counts (16 byte chunks) into vec4_offset*/
-        void allocateBuffer(const GLuint byte_offset) const {
-            glNamedBufferStorage(id, static_cast<GLintptr>(byte_offset), nullptr, GL_DYNAMIC_STORAGE_BIT);
+        void allocateBuffer(const GLintptr byte_offset) const {
+            glNamedBufferStorage(id, byte_offset, nullptr, GL_DYNAMIC_STORAGE_BIT);
         }
 
         /**pass vec4 counts (16 byte chunks) into vec4_offset*/
         template <trivially_copyable D>
-        void pushUniform(const GLuint byte_offset, const D& data) const {
-            this->pushData(static_cast<GLintptr>(byte_offset), data);
+        void pushUniform(const GLintptr byte_offset, const D& data) const {
+            this->pushData(byte_offset, data);
         }
     };
 }
