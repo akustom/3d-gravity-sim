@@ -45,22 +45,31 @@ int main() {
     shaderProgram.use();
 
     gfx::Mesh square;
-    gfx::makePolyhedron(square, 1.0f, 8);
+    gfx::makePolyhedron(square, 1.0f, 64, {1.0, 1.0, 1.0});
+
+    gfx::Mesh square1;
+    gfx::makePolyhedron(square1, 1.0f, 64, {1.0, 0.0, 1.0});
 
     glw::VAO vertexVAO;
     vertexVAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
     vertexVAO.formatAttribute(1, 0, 3, GL_FLOAT, offsetof(gfx::vertex, color));
+    vertexVAO.formatAttribute(2, 0, 3, GL_FLOAT, offsetof(gfx::vertex, normal));
 
-    vertexVAO.formatAttribute(2, 1, 4, GL_DOUBLE, 0);
+    vertexVAO.formatAttribute(3, 1, 4, GL_DOUBLE, 0);
     vertexVAO.setAttributeDivisor(1, 1);
 
     glw::VBO squareVBO;
     squareVBO.allocateBuffer(square.vertices);
     vertexVAO.attachBuffer(squareVBO, 0, 0, bytesof<gfx::vertex>());
 
+    glw::VBO square1VBO;
+    square1VBO.allocateBuffer(square1.vertices);
+
     glw::EBO squareEBO;
     squareEBO.allocateBuffer(square.indices);
     vertexVAO.attachBuffer(squareEBO);
+
+    square1VBO.allocateBuffer(square1.indices);
 
     phy::Particles particles;
     particles.createParticle(0, {0, 0, 0});
@@ -88,6 +97,7 @@ int main() {
         float dt = frameTimer.getFrameTime();
 
         gfx::drawInstances(static_cast<int>(particles.positions.size()), square);
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(square.indices.size() * 3), GL_UNSIGNED_INT, nullptr);
         camera.processKeyboard(window, dt);
         camera.pushViewMatrix(cameraUBO);
 

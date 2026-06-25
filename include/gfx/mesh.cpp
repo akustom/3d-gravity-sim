@@ -20,7 +20,7 @@ namespace gfx {
         std::vector<glm::uvec3> indices;
 
         vertices.reserve(sides + 1);
-        vertices.push_back({{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}});
+        vertices.push_back({{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}});
 
         float angleIncrement = glm::radians(360.0f / static_cast<float>(sides));
 
@@ -31,7 +31,7 @@ namespace gfx {
                 radius * std::sin(currentAngle),
                 0.0f
             );
-            vertices.push_back({pos, {1.0f, 1.0f, 1.0f}});
+            vertices.push_back({pos, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}});
         }
 
         for (int i = 1; i <= sides; ++i) {
@@ -46,7 +46,7 @@ namespace gfx {
         mesh.indices    = indices;
     }
 
-    std::vector<vertex> getPolyhedronVertices(float radius, int sides) {
+    std::vector<vertex> getPolyhedronVertices(float radius, int sides, const glm::vec3& color) {
         std::vector<vertex> vertices;
 
         float latitudeIncrement     = glm::radians(360.0f / static_cast<float>(sides % 2 == 0 ? sides : sides - 1));
@@ -64,7 +64,8 @@ namespace gfx {
 
                 vertices.push_back({
                     {currentX, currentY, currentZ},
-                    {0.9f, 0.9f, 0.4f}
+                    color,
+                    {0.0f, 0.0f, 0.0f}
                 });
             }
         }
@@ -95,11 +96,37 @@ namespace gfx {
         return indices;
     }
 
-    void makePolyhedron(Mesh& mesh, float radius, int sides) {
+    void getPolyhedronNormals(std::vector<vertex>& vertices, std::vector<glm::uvec3>& indices) {
+        for (auto& index : indices) {
+            unsigned int i0 = index.x;
+            unsigned int i1 = index.y;
+            unsigned int i2 = index.z;
+
+            glm::vec3 p0 = vertices[i0].pos;
+            glm::vec3 p1 = vertices[i1].pos;
+            glm::vec3 p2 = vertices[i2].pos;
+
+            glm::vec3 v1 = p0 - p1;
+            glm::vec3 v2 = p0 - p2;
+
+            glm::vec3 normal = glm::cross(v1, v2);
+
+            vertices[i0].normal += normal;
+            vertices[i1].normal += normal;
+            vertices[i2].normal += normal;
+        }
+
+        for (auto& vertex : vertices) {
+            vertex.normal = glm::normalize(vertex.normal);
+        }
+    }
+
+    void makePolyhedron(Mesh& mesh, float radius, int sides, const glm::vec3& color) {
         if (sides <= 3)
             return;
 
-        mesh.vertices = getPolyhedronVertices(radius, sides);
+        mesh.vertices = getPolyhedronVertices(radius, sides, color);
         mesh.indices = getPolyhedronIndices(sides);
+        getPolyhedronNormals(mesh.vertices, mesh.indices);
     }
 }
