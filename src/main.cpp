@@ -47,8 +47,13 @@ int main() {
     gfx::Mesh square;
     gfx::makePolyhedron(square, 1.0f, 64, {1.0, 1.0, 1.0});
 
-    gfx::Mesh square1;
-    gfx::makePolyhedron(square1, 1.0f, 64, {1.0, 0.0, 1.0});
+    gfx::Mesh cube;
+    gfx::makePolyhedron(cube, 1.0f, 64, {1.0, 0.0, 0.0});
+
+    gfx::Mesh combined;
+
+    moveVec(combined.vertices, square.vertices, cube.vertices);
+    moveVec(combined.indices, square.indices, cube.indices);
 
     glw::VAO vertexVAO;
     vertexVAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
@@ -58,21 +63,22 @@ int main() {
     vertexVAO.formatAttribute(3, 1, 4, GL_DOUBLE, 0);
     vertexVAO.setAttributeDivisor(1, 1);
 
-    glw::VBO squareVBO;
-    squareVBO.allocateBuffer(square.vertices);
-    vertexVAO.attachBuffer(squareVBO, 0, 0, bytesof<gfx::vertex>());
+    glw::VBO meshesVBO;
+    meshesVBO.allocateBuffer(combined.vertices);
+    vertexVAO.attachBuffer(meshesVBO, 0, 0, bytesof<gfx::vertex>());
 
-    glw::VBO square1VBO;
-    square1VBO.allocateBuffer(square1.vertices);
-
-    glw::EBO squareEBO;
-    squareEBO.allocateBuffer(square.indices);
-    vertexVAO.attachBuffer(squareEBO);
-
-    square1VBO.allocateBuffer(square1.indices);
+    glw::EBO meshesEBO;
+    meshesEBO.allocateBuffer(combined.indices);
+    vertexVAO.attachBuffer(meshesEBO);
 
     phy::Particles particles;
     particles.createParticle(0, {0, 0, 0});
+    particles.createParticle(0, {2, 0, 0});
+    particles.createParticle(0, {-2, 0, 0});
+    particles.createParticle(0, {0, 2, 0});
+    particles.createParticle(0, {0, -2, 0});
+    particles.createParticle(0, {0, 0, 2});
+    particles.createParticle(0, {0, 0, -2});
 
     glw::VBO instanceVBO;
     instanceVBO.allocateBuffer(particles.positions);
@@ -89,6 +95,7 @@ int main() {
     FrameTimer frameTimer;
 
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
     while (!glfwWindowShouldClose(window.glfw_window)) {
         glClearColor(0.07f, 0.07f, 0.07f, 1.0f);
@@ -96,8 +103,9 @@ int main() {
 
         float dt = frameTimer.getFrameTime();
 
-        gfx::drawInstances(static_cast<int>(particles.positions.size()), square);
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(square.indices.size() * 3), GL_UNSIGNED_INT, nullptr);
+        gfx::drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), cube, square.indexCount, square.vertexCount);
+        gfx::drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), square, 0, 0);
+
         camera.processKeyboard(window, dt);
         camera.pushViewMatrix(cameraUBO);
 
