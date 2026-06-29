@@ -125,8 +125,11 @@ namespace gfx {
         if (sides <= 3)
             return;
 
-        mesh.vertices = getPolyhedronVertices(radius, sides, color);
-        mesh.indices = getPolyhedronIndices(sides);
-        getPolyhedronNormals(mesh.vertices, mesh.indices);
+        mesh.vertices   = getPolyhedronVertices(radius, sides, color);
+        mesh.indices    = getPolyhedronIndices(sides);
+        getPolyhedronNormals(mesh.vertices, mesh.indices); // i dont even know if thisll work
+
+        mesh.vertexCount    = static_cast<int>(mesh.vertices.size());
+        mesh.indexCount     = static_cast<int>(3 * mesh.indices.size());
     }
 }

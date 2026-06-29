@@ -9,8 +9,10 @@ namespace gfx {
 
     struct Mesh {
         std::vector<vertex> vertices;
-
         std::vector<glm::uvec3> indices;
+
+        int vertexCount;
+        int indexCount;
 
         void loadModel();
     };
