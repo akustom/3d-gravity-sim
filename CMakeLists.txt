@@ -10,10 +10,10 @@ find_package(GLFW3 REQUIRED)
 add_executable(3grav
         src/main.cpp
         src/glad.c
-        include/gfx/camera.cpp
-        include/gfx/mesh.cpp
-        include/gfx/instance.cpp
-        include/win/window.cpp
+        src/gfx/camera.cpp
+        src/gfx/mesh.cpp
+        src/gfx/instance.cpp
+        src/win/window.cpp
 )
 
 target_include_directories(3grav PRIVATE ${CMAKE_SOURCE_DIR}/include)

@@ -1,7 +1,7 @@
-#include "instance.hpp"
+#include "gfx/instance.hpp"
 
 #include <glad/glad.h>
-#include "mesh.hpp"
+#include "gfx/mesh.hpp"
 
 namespace gfx {
     void drawInstances(int instance_count, const Mesh& mesh) {
