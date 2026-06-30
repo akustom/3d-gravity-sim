@@ -24,7 +24,7 @@ namespace gfx {
 
     std::vector<glm::uvec3> getPolyhedronIndices(int sides);
 
-    void getPolyhedronNormals(std::vector<vertex>& vertices, std::vector<glm::uvec3>& indices);
+    void getPolyhedronNormals(std::vector<vertex>& vertices);
 
     void makePolyhedron(Mesh& mesh, float radius, int sides, const glm::vec3& color);
 }
