@@ -10,8 +10,8 @@ private:
 
 public:
     static float getFrameTime() {
-        const float dt    = currentFrame - lastFrame;
-        lastFrame           = static_cast<float>(glfwGetTime());
+        const float dt  = currentFrame - lastFrame;
+        lastFrame       = static_cast<float>(glfwGetTime());
 
         return dt;
     }
@@ -19,8 +19,8 @@ public:
     static bool SetFPS(float fps) {
         if (static_cast<float>(glfwGetTime()) - currentFrame >= 1.0f/fps) {
             currentFrame = static_cast<float>(glfwGetTime());
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 };
