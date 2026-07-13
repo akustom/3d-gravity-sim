@@ -15,6 +15,8 @@
 #include "util.hpp"
 #include "fps.hpp"
 
+#include "engine/renderer.hpp"
+
 
 int main() {
     glfwInit();
@@ -103,8 +105,8 @@ int main() {
 
         float dt = frameTimer.getFrameTime();
 
-        gfx::drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), cube, square.indexCount, square.vertexCount);
-        gfx::drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), square, 0, 0);
+        drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), cube, square.indexCount, square.vertexCount);
+        drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), square, 0, 0);
 
         camera.processKeyboard(window, dt);
         camera.pushViewMatrix(cameraUBO);
