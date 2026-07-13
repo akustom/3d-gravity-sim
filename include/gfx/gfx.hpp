@@ -1,7 +1,6 @@
 #pragma once
 
 // header only
-#include "instance.hpp"
 #include "vertex.hpp"
 
 // header + source
