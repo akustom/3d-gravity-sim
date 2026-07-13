@@ -13,8 +13,8 @@
 #include "physics/phy.hpp"
 #include "io_utils.hpp"
 #include "util.hpp"
-#include "fps.hpp"
 
+#include "engine/fps.hpp"
 #include "engine/renderer.hpp"
 
 
@@ -94,16 +94,18 @@ int main() {
 
     vertexVAO.bind();
 
-    FrameTimer frameTimer;
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
     while (!glfwWindowShouldClose(window.glfw_window)) {
+        if (FrameTimer::SetFPS(120))
+            continue;
+
+        float dt = FrameTimer::getFrameTime();
+
         glClearColor(0.07f, 0.07f, 0.07f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        float dt = frameTimer.getFrameTime();
 
         drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), cube, square.indexCount, square.vertexCount);
         drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), square, 0, 0);
