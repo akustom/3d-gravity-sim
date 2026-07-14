@@ -11,11 +11,12 @@
 #include "gfx/gfx.hpp"
 #include "win/win.hpp"
 #include "physics/phy.hpp"
-#include "io_utils.hpp"
-#include "util.hpp"
 
 #include "engine/fps.hpp"
 #include "engine/renderer.hpp"
+
+#include "io_utils.hpp"
+#include "util.hpp"
 
 
 int main() {
