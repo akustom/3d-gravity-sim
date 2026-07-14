@@ -31,8 +31,6 @@ namespace gfx {
         float mouseSensitivity  = 0.1f;
         float fieldOfView       = 45.0f;
 
-        win::Window window;
-
         float lastX = 0.0f, lastY = 0.0f;
         bool firstMouse = true;
 
@@ -48,7 +46,7 @@ namespace gfx {
 
         void pushViewMatrix(const glw::UBO& ubo);
 
-        void pushProjectionMatrix(const glw::UBO& ubo) const;
+        void pushProjectionMatrix(int width, int height, const glw::UBO& ubo) const;
 
     private:
         void updateCameraVectors();

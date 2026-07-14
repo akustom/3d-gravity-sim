@@ -18,10 +18,13 @@
 
 namespace gfx {
     void Camera::use(const win::Window& window, const glw::UBO& camera_ubo) {
-        this->window = window;
         window.setUserPointer(this);
+
+        int width, height;
+        window.getWindowSize(&width, &height);
+
         pushViewMatrix(camera_ubo);
-        pushProjectionMatrix(camera_ubo);
+        pushProjectionMatrix(width, height, camera_ubo);
     }
 
     void Camera::processKeyboard(const win::Window& window, float dt) {
@@ -84,13 +87,11 @@ namespace gfx {
         isViewDirty = false;
     }
 
-    void Camera::pushProjectionMatrix(const glw::UBO& ubo) const {
-        int width, height;
-        window.getWindowSize(&width, &height);
+    void Camera::pushProjectionMatrix(const int win_width, const int win_height, const glw::UBO& ubo) const {
         ubo.pushUniform(
         bytesof<glm::mat4>(),
         glm::perspective(glm::radians(fieldOfView),
-        static_cast<float>(width)/static_cast<float>(height),
+        static_cast<float>(win_width)/static_cast<float>(win_height),
         0.1f, 100.0f));
     }
 
