@@ -9,7 +9,7 @@ namespace gfx {
 
     struct Mesh {
         std::vector<vertex> vertices;
-        std::vector<glm::uvec3> indices;
+        std::vector<glm::uint> indices;
 
         int vertexCount;
         int indexCount;
@@ -22,7 +22,7 @@ namespace gfx {
 
     std::vector<vertex> getPolyhedronVertices(float radius, int sides, const glm::vec3& color);
 
-    std::vector<glm::uvec3> getPolyhedronIndices(int sides);
+    std::vector<glm::uint> getPolyhedronIndices(int sides);
 
     void getPolyhedronNormals(std::vector<vertex>& vertices);
 

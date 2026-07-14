@@ -17,7 +17,7 @@ namespace gfx {
         if (sides < 3) return;
 
         std::vector<vertex> vertices;
-        std::vector<glm::uvec3> indices;
+        std::vector<glm::uint> indices;
 
         vertices.reserve(sides + 1);
         vertices.push_back({{0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}});
@@ -39,7 +39,7 @@ namespace gfx {
             GLuint current  = i;
             GLuint next     = i == sides ? 1 : i + 1;
 
-            indices.emplace_back(center, current, next);
+            indices.insert(indices.end(), {center, current, next});
         }
 
         mesh.vertices   = vertices;
@@ -73,24 +73,22 @@ namespace gfx {
         return vertices;
     }
 
-    std::vector<glm::uvec3> getPolyhedronIndices(int sides) {
-        std::vector<glm::uvec3> indices;
+    std::vector<glm::uint> getPolyhedronIndices(int sides) {
+        std::vector<glm::uint> indices;
 
         for (int i = 0; i < sides / 2; ++i) {
             for (int j = 0; j < sides; ++j) {
-                glm::uvec3 tri1Quad = {
-                    i * sides + j,
-                    i * sides + (j + 1) % sides,
-                    (i + 1) * sides + j
-                };
-                glm::uvec3 tri2Quad = {
-                    i * sides + (j + 1) % sides,
-                    (i + 1) * sides + j,
-                    (i + 1) * sides + (j + 1) % sides,
-                };
+                glm::uint tri0_0 = i * sides + j;
+                glm::uint tri0_1 = i * sides + (j + 1) % sides;
+                glm::uint tri0_2 = (i + 1) * sides + j;
 
-                indices.push_back(tri1Quad);
-                indices.push_back(tri2Quad);
+                indices.insert(indices.end(), {tri0_0, tri0_1, tri0_2});
+
+                glm::uint tri1_0 = i * sides + (j + 1) % sides;
+                glm::uint tri1_1 = (i + 1) * sides + j;
+                glm::uint tri1_2 = (i + 1) * sides + (j + 1) % sides;
+
+                indices.insert(indices.end(), {tri1_0, tri1_1, tri1_2});
             }
         }
         return indices;
@@ -111,6 +109,6 @@ namespace gfx {
         getPolyhedronNormals(mesh.vertices);
 
         mesh.vertexCount    = static_cast<int>(mesh.vertices.size());
-        mesh.indexCount     = static_cast<int>(3 * mesh.indices.size());
+        mesh.indexCount     = static_cast<int>(mesh.indices.size());
     }
 }
