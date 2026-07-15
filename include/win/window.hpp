@@ -22,13 +22,13 @@ namespace win {
         Window& operator=(const Window&) = delete;
 
         Window(const Window&& other) noexcept {
-            destroyself();
             glfw_window = other.glfw_window;
         }
         Window& operator=(Window&& other) noexcept {
             if (this == &other)
                 return *this;
-            destroyself();
+            if (glfw_window)
+                destroyself();
 
             glfw_window = other.glfw_window;
             other.glfw_window = nullptr;
