@@ -53,10 +53,8 @@ int main() {
     gfx::Mesh cube;
     gfx::makePolyhedron(cube, 1.0f, 64, {1.0, 0.0, 0.0});
 
-    gfx::Mesh combined;
-
-    moveVec(combined.vertices, square.vertices, cube.vertices);
-    moveVec(combined.indices, square.indices, cube.indices);
+    Render::initMesh(square);
+    Render::initMesh(cube);
 
     glw::VAO vertexVAO;
     vertexVAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
@@ -67,11 +65,11 @@ int main() {
     vertexVAO.setAttributeDivisor(1, 1);
 
     glw::VBO meshesVBO;
-    meshesVBO.allocateBuffer(combined.vertices);
+    meshesVBO.allocateBuffer(Render::batchedVertices);
     vertexVAO.attachBuffer(meshesVBO, 0, 0, bytesof<gfx::vertex>());
 
     glw::EBO meshesEBO;
-    meshesEBO.allocateBuffer(combined.indices);
+    meshesEBO.allocateBuffer(Render::batchedIndices);
     vertexVAO.attachBuffer(meshesEBO);
 
     phy::Particles particles;
@@ -100,7 +98,7 @@ int main() {
     glDepthFunc(GL_LEQUAL);
 
     while (!glfwWindowShouldClose(window.glfw_window)) {
-        if (!FrameTimer::SetFPS(60))
+        if (!FrameTimer::SetFPS(120))
             continue;
 
         float dt = FrameTimer::getFrameTime();
@@ -108,8 +106,8 @@ int main() {
         glClearColor(0.07f, 0.07f, 0.07f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glw::drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), cube.indexCount, square.indexCount, square.vertexCount);
-        glw::drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), square.indexCount, 0, 0);
+        Render::Mesh(square, static_cast<int>(particles.positions.size()));
+        Render::Mesh(cube, static_cast<int>(particles.positions.size()));
 
         camera.processKeyboard(window, dt);
         camera.pushViewMatrix(cameraUBO);
