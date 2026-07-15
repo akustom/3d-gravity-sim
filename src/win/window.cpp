@@ -19,6 +19,10 @@ namespace win {
         }
     }
 
+    void Window::destroyself() const {
+        glfwDestroyWindow(glfw_window);
+    }
+
     void Window::use() const {
         glfwMakeContextCurrent(glfw_window);
     }
