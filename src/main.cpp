@@ -13,6 +13,7 @@
 #include "physics/phy.hpp"
 
 #include "engine/fps.hpp"
+#include "engine/renderer.hpp"
 
 #include "io_utils.hpp"
 #include "util.hpp"
@@ -99,7 +100,7 @@ int main() {
     glDepthFunc(GL_LEQUAL);
 
     while (!glfwWindowShouldClose(window.glfw_window)) {
-        if (!FrameTimer::SetFPS(120))
+        if (!FrameTimer::SetFPS(60))
             continue;
 
         float dt = FrameTimer::getFrameTime();
