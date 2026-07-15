@@ -5,9 +5,9 @@
 
 namespace phy {
     struct Particles {
-        std::vector<glm::dvec4> positions;
-        std::vector<glm::dvec4> velocities;
-        std::vector<glm::dvec4> accelerations;
+        std::vector<glm::vec4> positions;
+        std::vector<glm::vec4> velocities;
+        std::vector<glm::vec4> accelerations;
 
         std::vector<double> masses;
 

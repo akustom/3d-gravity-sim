@@ -27,6 +27,7 @@ int main() {
         960, 540, "gravity sim babyyyy"
     };
     window.use();
+    glfwSwapInterval(0);
 
     glfwSetFramebufferSizeCallback(window.glfw_window, [](GLFWwindow* win, const int w, const int h) {
         glViewport(0, 0, w, h);
@@ -67,7 +68,7 @@ int main() {
     vertexVAO.formatAttribute(1, 0, 3, GL_FLOAT, offsetof(gfx::vertex, color));
     vertexVAO.formatAttribute(2, 0, 3, GL_FLOAT, offsetof(gfx::vertex, normal));
 
-    vertexVAO.formatAttribute(3, 1, 4, GL_DOUBLE, 0);
+    vertexVAO.formatAttribute(3, 1, 4, GL_FLOAT, 0);
     vertexVAO.setAttributeDivisor(1, 1);
 
 
@@ -91,7 +92,7 @@ int main() {
 
     glw::VBO instanceVBO;
     instanceVBO.allocateBuffer(particles.positions);
-    vertexVAO.attachBuffer(instanceVBO, 1, 0, bytesof<glm::dvec4>());
+    vertexVAO.attachBuffer(instanceVBO, 1, 0, bytesof<glm::vec4>());
 
 
     gfx::Camera camera;
@@ -115,14 +116,15 @@ int main() {
         glClearColor(0.07f, 0.07f, 0.07f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Render.Mesh(square, static_cast<int>(particles.positions.size()));
-        Render.Mesh(cube, static_cast<int>(particles.positions.size()));
-
         camera.processKeyboard(window, dt);
         camera.pushViewMatrix(cameraUBO);
 
+        Render.Mesh(square, static_cast<int>(particles.positions.size()));
+
         glfwSwapBuffers(window.glfw_window);
         glfwPollEvents();
+
+        std::cout << 1/dt << "\n";
     }
 
     glfwTerminate();
