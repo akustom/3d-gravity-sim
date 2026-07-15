@@ -123,8 +123,6 @@ int main() {
 
         glfwSwapBuffers(window.glfw_window);
         glfwPollEvents();
-
-        std::cout << 1/dt << "\n";
     }
 
     glfwTerminate();
