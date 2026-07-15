@@ -31,9 +31,10 @@ namespace gfx {
         float mouseSensitivity  = 0.1f;
         float fieldOfView       = 45.0f;
 
-        float lastX = 0.0f, lastY = 0.0f;
-        bool firstMouse = true;
+        float lastX = 0.0f;
+        float lastY = 0.0f;
 
+        bool firstMouse = true;
         bool isViewDirty = true;
 
         void use(const win::Window& window, const glw::UBO& camera_ubo);
