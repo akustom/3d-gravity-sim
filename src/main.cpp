@@ -13,7 +13,6 @@
 #include "physics/phy.hpp"
 
 #include "engine/fps.hpp"
-#include "engine/renderer.hpp"
 
 #include "io_utils.hpp"
 #include "util.hpp"
@@ -108,8 +107,8 @@ int main() {
         glClearColor(0.07f, 0.07f, 0.07f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), cube, square.indexCount, square.vertexCount);
-        drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), square, 0, 0);
+        glw::drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), cube.indexCount, square.indexCount, square.vertexCount);
+        glw::drawInstancesBaseVertex(static_cast<int>(particles.positions.size()), square.indexCount, 0, 0);
 
         camera.processKeyboard(window, dt);
         camera.pushViewMatrix(cameraUBO);
