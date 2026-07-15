@@ -19,12 +19,11 @@ class Render {
         MeshIndexData(const int vbo_o = 0, const int ebo_o = 0) : vbo_offset(vbo_o), ebo_offset(ebo_o) {}
     };
 
+public:
     inline static std::vector<MeshIndexData>    indexedMeshes;
     inline static std::vector<gfx::vertex>      batchedVertices;
     inline static std::vector<glm::uint>        batchedIndices;
 
     static void initMesh(gfx::Mesh& mesh);
-
-public:
     static void Mesh(gfx::Mesh& mesh, int instances);
 };
