@@ -107,8 +107,5 @@ namespace gfx {
         mesh.vertices   = getPolyhedronVertices(radius, sides, color);
         mesh.indices    = getPolyhedronIndices(sides);
         getPolyhedronNormals(mesh.vertices);
-
-        mesh.vertexCount    = static_cast<int>(mesh.vertices.size());
-        mesh.indexCount     = static_cast<int>(mesh.indices.size());
     }
 }
