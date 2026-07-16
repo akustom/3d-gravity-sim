@@ -43,7 +43,7 @@ int main() {
     glViewport(0, 0, 960, 540);
 
 
-    Render Render;
+    Renderer Render;
 
 
     glw::ShaderProgram shaderProgram;
