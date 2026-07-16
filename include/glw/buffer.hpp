@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <glad/glad.h>
-#include "debug.hpp"
 #include "gl_utils.hpp"
 #include "util.hpp"
 
