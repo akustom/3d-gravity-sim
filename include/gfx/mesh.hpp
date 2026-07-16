@@ -11,7 +11,7 @@ namespace gfx {
         std::vector<vertex>     vertices;
         std::vector<glm::uint>  indices;
 
-        int id = 0;
+        int id = -1;
 
         void loadModel();
     };
