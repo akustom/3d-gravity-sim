@@ -18,6 +18,8 @@
 #include "io_utils.hpp"
 #include "util.hpp"
 
+#include "tracy/Tracy.hpp"
+
 
 int main() {
     glfwInit();
@@ -85,6 +87,7 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
+    ZoneScopedN("Main Loop Iteration");
     while (!glfwWindowShouldClose(window.glfw_window)) {
         if (!FrameTimer::SetFPS(120))
             continue;
@@ -102,6 +105,7 @@ int main() {
 
         glfwSwapBuffers(window.glfw_window);
         glfwPollEvents();
+        FrameMark;
     }
 
     glfwTerminate();
