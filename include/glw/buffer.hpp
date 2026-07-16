@@ -44,8 +44,9 @@ namespace glw {
             glNamedBufferStorage(id, bytesof(init_data), init_data.data(), flag);
         }
 
-        void destroy() const {
+        void destroy() {
             glDeleteBuffers(1, &id);
+            id = 0;
         }
 
         template <trivially_copyable T>
