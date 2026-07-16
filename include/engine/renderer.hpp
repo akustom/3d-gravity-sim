@@ -31,6 +31,9 @@ public:
     std::vector<gfx::vertex>      batchedVertices;
     std::vector<glm::uint>        batchedIndices;
 
+    // IDEA: pre-allocate a large amount of vram for vertex data nad stuff like that, make its capacity double everytime it gets full
+    // this approach prevents expensive reallocation, and it even
+
     Renderer() {
         VAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
         VAO.formatAttribute(1, 0, 3, GL_FLOAT, offsetof(gfx::vertex, color));
