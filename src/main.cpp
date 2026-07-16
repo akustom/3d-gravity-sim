@@ -60,26 +60,6 @@ int main() {
     gfx::Mesh cube;
     gfx::makePolyhedron(cube, 1.0f, 64, {1.0, 0.0, 0.0});
 
-    Render.initMesh(square);
-    Render.initMesh(cube);
-
-    glw::VAO vertexVAO;
-    vertexVAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
-    vertexVAO.formatAttribute(1, 0, 3, GL_FLOAT, offsetof(gfx::vertex, color));
-    vertexVAO.formatAttribute(2, 0, 3, GL_FLOAT, offsetof(gfx::vertex, normal));
-
-    vertexVAO.formatAttribute(3, 1, 4, GL_FLOAT, 0);
-    vertexVAO.setAttributeDivisor(1, 1);
-
-
-    glw::VBO meshesVBO;
-    meshesVBO.allocateBuffer(Render.batchedVertices);
-    vertexVAO.attachBuffer(meshesVBO, 0, 0, bytesof<gfx::vertex>());
-
-    glw::EBO meshesEBO;
-    meshesEBO.allocateBuffer(Render.batchedIndices);
-    vertexVAO.attachBuffer(meshesEBO);
-
 
     phy::Particles particles;
     particles.createParticle(0, {0, 0, 0});
@@ -92,7 +72,7 @@ int main() {
 
     glw::VBO instanceVBO;
     instanceVBO.allocateBuffer(particles.positions);
-    vertexVAO.attachBuffer(instanceVBO, 1, 0, bytesof<glm::vec4>());
+    Render.VAO.attachBuffer(instanceVBO, 1, 0, bytesof<glm::vec4>());
 
 
     gfx::Camera camera;
@@ -100,8 +80,6 @@ int main() {
     cameraUBO.bind(0);
     cameraUBO.allocateBuffer(2 * bytesof<glm::mat4>());
     camera.use(window, cameraUBO);
-
-    vertexVAO.bind();
 
 
     glEnable(GL_DEPTH_TEST);

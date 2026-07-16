@@ -20,18 +20,28 @@ class Renderer {
         MeshIndexData(const int ebo_o = 0, const int vbo_o = 0) : ebo_offset(ebo_o), vbo_offset(vbo_o) {}
     };
 
-    void refreshBuffers();
-
-public:
-    std::vector<MeshIndexData>    indexedMeshes;
-    std::vector<gfx::vertex>      batchedVertices;
-    std::vector<glm::uint>        batchedIndices;
 
     glw::VBO batchedVBO;
     glw::EBO batchedEBO;
 
-    glw::VAO VAO;
+public:
+    glw::VAO VAO; // TODO: move this into private once you handle line ~75 in main.cpp
 
-    void initMesh(gfx::Mesh& mesh);
+    std::vector<MeshIndexData>    indexedMeshes;
+    std::vector<gfx::vertex>      batchedVertices;
+    std::vector<glm::uint>        batchedIndices;
+
+    Renderer() {
+        VAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
+        VAO.formatAttribute(1, 0, 3, GL_FLOAT, offsetof(gfx::vertex, color));
+        VAO.formatAttribute(2, 0, 3, GL_FLOAT, offsetof(gfx::vertex, normal));
+
+        VAO.formatAttribute(3, 1, 4, GL_FLOAT, 0);
+        VAO.setAttributeDivisor(1, 1);
+    }
+
+    void refreshBuffers();
+
+    void indexMesh(gfx::Mesh& mesh);
     void Mesh(gfx::Mesh& mesh, int instances);
 };

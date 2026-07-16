@@ -6,15 +6,17 @@
 
 void Renderer::refreshBuffers() {
     batchedVBO.destroy();
+    batchedVBO.create();
     batchedVBO.allocateBuffer(batchedVertices);
     VAO.attachBuffer(batchedVBO, 0, 0, bytesof<gfx::vertex>());
 
     batchedEBO.destroy();
+    batchedEBO.create();
     batchedEBO.allocateBuffer(batchedIndices);
     VAO.attachBuffer(batchedEBO);
 }
 
-void Renderer::initMesh(gfx::Mesh& mesh) {
+void Renderer::indexMesh(gfx::Mesh& mesh) {
     mesh.id = static_cast<int>(indexedMeshes.size());
     indexedMeshes.emplace_back(static_cast<int>(batchedVertices.size()), static_cast<int>(batchedIndices.size()));
 
@@ -30,7 +32,9 @@ void Renderer::initMesh(gfx::Mesh& mesh) {
 
 void Renderer::Mesh(gfx::Mesh& mesh, const int instances) {
     if (mesh.id == -1)
-        initMesh(mesh);
+        indexMesh(mesh);
+
+    VAO.bind();
 
     glw::drawInstancesBaseVertex(
         instances,
