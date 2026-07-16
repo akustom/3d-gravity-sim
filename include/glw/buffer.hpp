@@ -44,6 +44,10 @@ namespace glw {
             glNamedBufferStorage(id, bytesof(init_data), init_data.data(), flag);
         }
 
+        void destroy() const {
+            glDeleteBuffers(1, &id);
+        }
+
         template <trivially_copyable T>
         void pushData(const int byte_offset, std::vector<T>& data) const {
             glNamedBufferSubData(id, byte_offset, bytesof(data), data.data());
