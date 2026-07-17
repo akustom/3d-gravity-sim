@@ -20,6 +20,10 @@ class Renderer {
         MeshIndexData(const int ebo_o = 0, const int vbo_o = 0) : ebo_offset(ebo_o), vbo_offset(vbo_o) {}
     };
 
+    struct BatchStorageData {
+        int size = 0;
+        int capacity = 0;
+    };
 
     glw::VBO batchedVBO;
     glw::EBO batchedEBO;
@@ -27,12 +31,10 @@ class Renderer {
 public:
     glw::VAO VAO; // TODO: move this into private once you handle line ~75 in main.cpp
 
-    std::vector<MeshIndexData>    indexedMeshes;
-    std::vector<gfx::vertex>      batchedVertices;
-    std::vector<glm::uint>        batchedIndices;
+    std::vector<MeshIndexData> indexedMeshes;
 
-    // IDEA: pre-allocate a large amount of vram for vertex data nad stuff like that, make its capacity double everytime it gets full
-    // this approach prevents expensive reallocation, and it even
+    BatchStorageData verticesBatch;
+    BatchStorageData indicesBatch;
 
     Renderer() { // TODO: refactor this to be more flexible with its formatting
         VAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
@@ -43,7 +45,7 @@ public:
         VAO.setAttributeDivisor(1, 1);
     }
 
-    void refreshBuffers();
+    void refreshBuffers(gfx::Mesh& mesh);
 
     void indexMesh(gfx::Mesh& mesh);
     void Mesh(gfx::Mesh& mesh, int instances);

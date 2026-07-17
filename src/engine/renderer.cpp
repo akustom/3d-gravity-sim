@@ -6,30 +6,45 @@
 
 #include "tracy/Tracy.hpp"
 
-void Renderer::refreshBuffers() {
-    batchedVBO.destroy();
-    batchedVBO.create();
-    batchedVBO.allocateBuffer(batchedVertices);
+void Renderer::refreshBuffers(gfx::Mesh& mesh) {
+    if (verticesBatch.size + mesh.vertices.size() > verticesBatch.capacity) {
+        verticesBatch.capacity = 2 * std::max(verticesBatch.size, sc_int(mesh.vertices.size()));
+
+        glw::VBO tempVBO;
+        tempVBO.allocateBuffer<gfx::vertex>(verticesBatch.capacity, GL_DYNAMIC_STORAGE_BIT);
+        tempVBO.copyData<gfx::vertex>(batchedVBO, verticesBatch.size);
+
+        batchedVBO = std::move(tempVBO);
+    }
+    batchedVBO.pushData(sc_int(bytesof<gfx::vertex>()) * verticesBatch.size, mesh.vertices);
     VAO.attachBuffer(batchedVBO, 0, 0, bytesof<gfx::vertex>());
 
-    batchedEBO.destroy();
-    batchedEBO.create();
-    batchedEBO.allocateBuffer(batchedIndices);
+    if (indicesBatch.size + mesh.indices.size() > indicesBatch.capacity) {
+        indicesBatch.capacity = 2 * std::max(indicesBatch.size, sc_int(mesh.indices.size()));
+
+        glw::EBO tempEBO;
+        tempEBO.allocateBuffer<glm::uint>(indicesBatch.capacity, GL_DYNAMIC_STORAGE_BIT);
+        tempEBO.copyData<glm::uint>(batchedEBO, indicesBatch.size);
+
+        batchedEBO = std::move(tempEBO);
+    }
+    batchedEBO.pushData(sc_int(bytesof<glm::uint>()) * indicesBatch.size, mesh.indices);
     VAO.attachBuffer(batchedEBO);
 }
 
 void Renderer::indexMesh(gfx::Mesh& mesh) {
-    mesh.id = static_cast<int>(indexedMeshes.size());
-    indexedMeshes.emplace_back(static_cast<int>(batchedVertices.size()), static_cast<int>(batchedIndices.size()));
+    ZoneScoped;
+    mesh.id = sc_int(indexedMeshes.size());
+    indexedMeshes.emplace_back(indicesBatch.size, verticesBatch.size);
 
-    indexedMeshes[mesh.id].indexCount = static_cast<int>(mesh.indices.size());
-    indexedMeshes[mesh.id].ebo_offset = static_cast<int>(batchedIndices.size());
-    indexedMeshes[mesh.id].vbo_offset = static_cast<int>(batchedVertices.size());
+    indexedMeshes[mesh.id].indexCount = sc_int(mesh.indices.size());
+    indexedMeshes[mesh.id].ebo_offset = indicesBatch.size;
+    indexedMeshes[mesh.id].vbo_offset = verticesBatch.size;
 
-    moveVecHelper(batchedIndices, mesh.indices);
-    moveVecHelper(batchedVertices, mesh.vertices);
+    refreshBuffers(mesh);
 
-    refreshBuffers();
+    indicesBatch.size  += sc_int(mesh.indices.size());
+    verticesBatch.size += sc_int(mesh.vertices.size());
 }
 
 void Renderer::Mesh(gfx::Mesh& mesh, const int instances) {
