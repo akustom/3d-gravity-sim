@@ -13,13 +13,17 @@ namespace glw {
         void create() {
             glCreateBuffers(1, &id);
         }
+        void destroy() {
+            glDeleteBuffers(1, &id);
+            id = 0;
+        }
 
         Buffer() {
             create();
         }
 
         ~Buffer() {
-            glDeleteBuffers(1, &id);
+            destroy();
         }
         Buffer(const Buffer&) = delete;
         Buffer& operator=(const Buffer&) = delete;
@@ -43,9 +47,9 @@ namespace glw {
             glNamedBufferStorage(id, bytesof(init_data), init_data.data(), flag);
         }
 
-        void destroy() {
-            glDeleteBuffers(1, &id);
-            id = 0;
+        template <trivially_copyable T>
+        void allocateBuffer(int size, const GLenum flag = 0) const {
+            glNamedBufferStorage(id, bytesof<T>() * size, nullptr, flag);
         }
 
         template <trivially_copyable T>
@@ -55,6 +59,11 @@ namespace glw {
         template <trivially_copyable T>
         void pushData(const int byte_offset, T& data) const {
             glNamedBufferSubData(id, byte_offset, bytesof<T>(), getPtr(data));
+        }
+
+        template <trivially_copyable T>
+        void copyData(Buffer& srcBuffer, int size) const {
+            glCopyNamedBufferSubData(srcBuffer.id, id, 0, 0, size * bytesof<T>());
         }
     };
 
