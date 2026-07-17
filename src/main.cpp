@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <random>
 // opengl
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -60,7 +61,7 @@ int main() {
     gfx::makePolyhedron(square, 1.0f, 64, {1.0, 1.0, 1.0});
 
     gfx::Mesh cube;
-    gfx::makePolyhedron(cube, 1.0f, 64, {1.0, 0.0, 0.0});
+    gfx::makePolyhedron(cube, 1.0f, 6, {1.0, 0.0, 0.0});
 
 
     phy::Particles particles;
@@ -71,6 +72,18 @@ int main() {
     particles.createParticle(0, {0, -2, 0});
     particles.createParticle(0, {0, 0, 2});
     particles.createParticle(0, {0, 0, -2});
+
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    std::uniform_real_distribution<float> disX(-1000.0f, 1000.0f);
+    std::uniform_real_distribution<float> disY(-1000.0f, 1000.0f);
+    std::uniform_real_distribution<float> disZ(-1000.0f, 1000.0f);
+
+    while (particles.positions.size() < 1000000) {
+        particles.createParticle(0, {disX(gen), disY(gen), disZ(gen)});
+    }
 
     glw::VBO instanceVBO;
     instanceVBO.allocateBuffer(particles.positions);
@@ -100,7 +113,7 @@ int main() {
         camera.processKeyboard(window, dt);
         camera.pushViewMatrix(cameraUBO);
 
-        Render.Mesh(square, static_cast<int>(particles.positions.size()));
+        //Render.Mesh(square, static_cast<int>(particles.positions.size()));
         Render.Mesh(cube,   static_cast<int>(particles.positions.size()));
 
         glfwSwapBuffers(window.glfw_window);
