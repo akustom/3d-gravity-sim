@@ -30,7 +30,6 @@ namespace gfx {
     }
 
     void Camera::processKeyboard(const win::Window& window, float dt) {
-        ZoneScoped;
         if (window.isKeyPressed(GLFW_KEY_W)) {
             position += front * movementSpeed * dt;
             isViewDirty = true;
@@ -60,7 +59,6 @@ namespace gfx {
     void Camera::processMouse(double x_offset, double y_offset, bool constrain_pitch) {
         if (x_offset == 0 && y_offset == 0)
             return;
-        ZoneScoped;
 
         isViewDirty = true;
 
@@ -87,7 +85,6 @@ namespace gfx {
     void Camera::pushViewMatrix(const glw::UBO& ubo) {
         if (!isViewDirty)
             return;
-        ZoneScoped;
         ubo.pushUniform(0, getViewMatrix());
         isViewDirty = false;
     }

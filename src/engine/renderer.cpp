@@ -7,7 +7,6 @@
 #include "tracy/Tracy.hpp"
 
 void Renderer::refreshBuffers() {
-    ZoneScoped;
     batchedVBO.destroy();
     batchedVBO.create();
     batchedVBO.allocateBuffer(batchedVertices);
@@ -20,7 +19,6 @@ void Renderer::refreshBuffers() {
 }
 
 void Renderer::indexMesh(gfx::Mesh& mesh) {
-    ZoneScoped;
     mesh.id = static_cast<int>(indexedMeshes.size());
     indexedMeshes.emplace_back(static_cast<int>(batchedVertices.size()), static_cast<int>(batchedIndices.size()));
 
@@ -35,7 +33,6 @@ void Renderer::indexMesh(gfx::Mesh& mesh) {
 }
 
 void Renderer::Mesh(gfx::Mesh& mesh, const int instances) {
-    ZoneScoped;
     if (mesh.id == -1)
         indexMesh(mesh);
 

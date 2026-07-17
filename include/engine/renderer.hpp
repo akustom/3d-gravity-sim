@@ -34,7 +34,7 @@ public:
     // IDEA: pre-allocate a large amount of vram for vertex data nad stuff like that, make its capacity double everytime it gets full
     // this approach prevents expensive reallocation, and it even
 
-    Renderer() {
+    Renderer() { // TODO: refactor this to be more flexible with its formatting
         VAO.formatAttribute(0, 0, 3, GL_FLOAT, offsetof(gfx::vertex, pos));
         VAO.formatAttribute(1, 0, 3, GL_FLOAT, offsetof(gfx::vertex, color));
         VAO.formatAttribute(2, 0, 3, GL_FLOAT, offsetof(gfx::vertex, normal));
