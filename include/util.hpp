@@ -5,7 +5,7 @@
 
 
 template <typename T>
-constexpr size_t bytesof(std::vector<T>& vec) {
+constexpr size_t bytesof(const std::vector<T>& vec) {
     return vec.size() * sizeof(T);
 }
 template <typename T>
@@ -14,7 +14,7 @@ constexpr size_t bytesof() {
 }
 
 template <typename T>
-void moveVecHelper(std::vector<T>& dest, std::vector<T>& source) {
+void moveVecHelper(std::vector<T>& dest, const std::vector<T>& source) {
     dest.insert(
     dest.end(),
     std::make_move_iterator(source.begin()),
@@ -29,4 +29,10 @@ void moveVec(std::vector<T>& dest, Args&... source) {
     dest.reserve(size);
 
     (moveVecHelper(dest, source), ...);
+}
+
+template <typename T>
+requires std::is_arithmetic_v<T>
+constexpr int sc_int(T num) {
+    return static_cast<int>(num);
 }
