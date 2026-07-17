@@ -101,7 +101,7 @@ int main() {
         camera.pushViewMatrix(cameraUBO);
 
         Render.Mesh(square, static_cast<int>(particles.positions.size()));
-        Render.Mesh(cube, static_cast<int>(particles.positions.size()));
+        Render.Mesh(cube,   static_cast<int>(particles.positions.size()));
 
         glfwSwapBuffers(window.glfw_window);
         glfwPollEvents();
