@@ -85,6 +85,7 @@ int main() {
         particles.createParticle(0, {disX(gen), disY(gen), disZ(gen)});
     }
 
+
     glw::VBO instanceVBO;
     instanceVBO.allocateBuffer(particles.positions);
     Render.VAO.attachBuffer(instanceVBO, 1, 0, bytesof<glm::vec4>());
