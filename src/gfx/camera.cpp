@@ -94,7 +94,7 @@ namespace gfx {
         bytesof<glm::mat4>(),
         glm::perspective(glm::radians(fieldOfView),
         static_cast<float>(win_width)/static_cast<float>(win_height),
-        0.1f, 100.0f));
+        0.1f, 1732.0f));
     }
 
     void Camera::updateCameraVectors() {
