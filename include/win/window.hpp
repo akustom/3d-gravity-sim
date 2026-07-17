@@ -21,7 +21,7 @@ namespace win {
         Window(const Window&) = delete;
         Window& operator=(const Window&) = delete;
 
-        Window(const Window&& other) noexcept {
+        Window(Window&& other) noexcept {
             glfw_window = other.glfw_window;
         }
         Window& operator=(Window&& other) noexcept {
