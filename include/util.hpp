@@ -14,7 +14,7 @@ constexpr size_t bytesof() {
 }
 
 template <typename T>
-void moveVecHelper(std::vector<T>& dest, const std::vector<T>& source) {
+void moveVecHelper(std::vector<T>& dest, std::vector<T>& source) {
     dest.insert(
     dest.end(),
     std::make_move_iterator(source.begin()),
